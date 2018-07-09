@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion project.compileAPI.toInteger()
+    buildToolsVersion project.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion project.minAPI.toInteger()
+        targetSdkVersion project.targetAPI.toInteger()
+        versionName project.versionName
+        versionCode project.versionCode.toInteger()
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+
+    dexOptions {
+        dexInProcess = true
+        javaMaxHeapSize "5g"
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+    implementation "com.android.support:support-annotations:$supportLibraryVersion"
+    implementation "com.android.support:support-v13:$supportLibraryVersion"
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:multidex:$alternateSupportLibraryVersion"
+
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
+
+    annotationProcessor "com.android.databinding:compiler:$androidToolsVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycleVersion"
+}
