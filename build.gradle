@@ -2,6 +2,8 @@
 
 buildscript {
     ext.androidToolsVersion = '3.0.1'
+    ext.mavenPlugin = '2.0'
+    ext.jfrogVersion = '1.8.0'
 
     repositories {
         google()
@@ -9,7 +11,8 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsVersion"
-
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$mavenPlugin"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$jfrogVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
