@@ -63,4 +63,4 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycleVersion"
 }
 
-apply from: 'publish.gradle'
+//apply from: 'publish.gradle'
