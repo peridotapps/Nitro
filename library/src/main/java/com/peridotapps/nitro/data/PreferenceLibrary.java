@@ -76,6 +76,7 @@ public class PreferenceLibrary {
     return this.sharedPreferences.get();
   }
   
+  @SuppressWarnings("unchecked")
   private <T> T readPreference(String identifier, T defaultValue) {
     
     SharedPreferences preferences = getSharedPreferences();
@@ -94,8 +95,9 @@ public class PreferenceLibrary {
     }
   }
   
+  @SuppressWarnings("unchecked")
   @SuppressLint("ApplySharedPref")
-  private <T> T writePreference(String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
+  private <T> void writePreference(String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
     SharedPreferences.Editor preferencesEditor = getSharedPreferences().edit();
     
     if (value instanceof String) {
@@ -121,20 +123,6 @@ public class PreferenceLibrary {
     }
     
     getPreferenceCache().put(identifier, value);
-    
-    return value;
-  }
-  
-  private <T> T getPreference(String identifier, T defaultValue) {
-    return readPreference(identifier, defaultValue);
-  }
-  
-  private <T> T applyPreference(String identifier, @NonNull T value) throws InvalidClassException {
-    return writePreference(identifier, value, false);
-  }
-  
-  private <T> T commitPreference(String identifier, @NonNull T value) throws InvalidClassException {
-    return writePreference(identifier, value, true);
   }
   
   public boolean removePreference(String identifier) {
@@ -189,7 +177,6 @@ public class PreferenceLibrary {
   public Set<String> getPreference(String identifier, Set<String> defaultValue) {
     return readPreference(identifier, defaultValue);
   }
-  
   
   public PreferenceLibrary applyPreference(String identifier, @NonNull String value) {
     try {
@@ -317,6 +304,7 @@ public class PreferenceLibrary {
     
     return this;
   }
+  
   
   public static class Builder {
     
