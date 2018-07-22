@@ -16,99 +16,99 @@ import com.peridotapps.nitro.ui.core.INitroWindow;
 import com.peridotapps.nitro.ui.view.NitroProgressView;
 
 abstract class NitroFragment extends Fragment implements INitroWindow, Network.NetworkStatusObserver {
-
-    private LayoutInflater inflater;
-    private ViewGroup container;
-    private View view;
-
-    @Override
-    public void attachLayout() {
-        view = inflater.inflate(getLayoutResourceId(), container, shouldAttachToRoot());
+  
+  private LayoutInflater inflater;
+  private ViewGroup container;
+  private View view;
+  
+  @Override
+  public void attachLayout() {
+    view = inflater.inflate(getLayoutResourceId(), container, shouldAttachToRoot());
+  }
+  
+  @Nullable
+  @Override
+  public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    setCreateProperties(inflater, container);
+    setHasOptionsMenu(hasMenu());
+    attachLayout();
+    gatherControls();
+    handleCreateViewSavedInstanceState(savedInstanceState);
+    return view;
+  }
+  
+  @CallSuper
+  @Override
+  public void onResume() {
+    super.onResume();
+    Network.getNetworkMonitor().addObserver(this);
+    bindData();
+  }
+  
+  @CallSuper
+  @Override
+  public void onPause() {
+    Network.getNetworkMonitor().removeObserver(this);
+    super.onPause();
+  }
+  
+  @Override
+  public void gatherControls() {
+    // Stub
+  }
+  
+  @Override
+  public void bindData() {
+    // Stub
+  }
+  
+  @Override
+  public final NitroProgressView getProgressView() {
+    if (getActivity() != null && getActivity() instanceof NitroActivity) {
+      return ((NitroActivity) getActivity()).getProgressView();
     }
-
-    @Nullable
-    @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        setCreateProperties(inflater, container);
-        setHasOptionsMenu(hasMenu());
-        attachLayout();
-        gatherControls();
-        handleCreateViewSavedInstanceState(savedInstanceState);
-        return view;
+    
+    return null;
+  }
+  
+  @Override
+  public final <T extends View> T findViewById(@IdRes int id) {
+    if (this.view != null) {
+      return view.findViewById(id);
     }
-
-    @CallSuper
-    @Override
-    public void onResume() {
-        super.onResume();
-        Network.getNetworkMonitor().addObserver(this);
-        bindData();
+    return null;
+  }
+  
+  public final boolean hasMenu() {
+    return this.getMenuResourceId() != null;
+  }
+  
+  @Override
+  public final void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    if (hasMenu()) {
+      inflater.inflate(getMenuResourceId(), menu);
     }
-
-    @CallSuper
-    @Override
-    public void onPause() {
-        Network.getNetworkMonitor().removeObserver(this);
-        super.onPause();
-    }
-
-    @Override
-    public void gatherControls() {
-        // Stub
-    }
-
-    @Override
-    public void bindData() {
-        // Stub
-    }
-
-    @Override
-    public final NitroProgressView getProgressView() {
-        if (getActivity() != null && getActivity() instanceof NitroActivity) {
-            return ((NitroActivity) getActivity()).getProgressView();
-        }
-
-        return null;
-    }
-
-    @Override
-    public final <T extends View> T findViewById(@IdRes int id) {
-        if (this.view != null) {
-            return view.findViewById(id);
-        }
-        return null;
-    }
-
-    public final boolean hasMenu() {
-        return this.getMenuResourceId() != null;
-    }
-
-    @Override
-    public final void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (hasMenu()) {
-            inflater.inflate(getMenuResourceId(), menu);
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    protected boolean shouldAttachToRoot() {
-        return false;
-    }
-
-    protected void handleCreateViewSavedInstanceState(Bundle savedInstanceState) {
-        // Stub
-    }
-
-    protected final LayoutInflater getInflater() {
-        return inflater;
-    }
-
-    protected final ViewGroup getContainer() {
-        return container;
-    }
-
-    private void setCreateProperties(LayoutInflater inflater, @Nullable ViewGroup container) {
-        this.inflater = inflater;
-        this.container = container;
-    }
+    super.onCreateOptionsMenu(menu, inflater);
+  }
+  
+  protected boolean shouldAttachToRoot() {
+    return false;
+  }
+  
+  protected void handleCreateViewSavedInstanceState(Bundle savedInstanceState) {
+    // Stub
+  }
+  
+  protected final LayoutInflater getInflater() {
+    return inflater;
+  }
+  
+  protected final ViewGroup getContainer() {
+    return container;
+  }
+  
+  private void setCreateProperties(LayoutInflater inflater, @Nullable ViewGroup container) {
+    this.inflater = inflater;
+    this.container = container;
+  }
 }
