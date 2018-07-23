@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="email_format">plain/text</string>
+    <string name="send_email_launcher_caption">Send a message using...</string>
+    <string name="link_launch_caption">Launch link using...</string>
+</resources>

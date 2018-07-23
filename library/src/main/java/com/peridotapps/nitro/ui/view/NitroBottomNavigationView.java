@@ -10,27 +10,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.peridotapps.nitro.R;
 
 public class NitroBottomNavigationView extends BottomNavigationView {
   
   private BottomNavigationMenuView bottomNavMenu;
   
-  public NitroBottomNavigationView(Context context) {
+  public NitroBottomNavigationView (Context context) {
     this(context, null);
   }
   
-  public NitroBottomNavigationView(Context context, AttributeSet attrs) {
+  public NitroBottomNavigationView (Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
   
-  public NitroBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public NitroBottomNavigationView (Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     addNotificationBadgesToTabs();
   }
   
-  private void addNotificationBadgesToTabs() {
+  private void addNotificationBadgesToTabs () {
     for (int pos = 0; pos < getBottomNavigationMenuView().getChildCount(); pos++) {
       if (getBottomNavigationMenuView().getChildAt(pos) instanceof BottomNavigationItemView) {
         BottomNavigationItemView tab = (BottomNavigationItemView) getBottomNavigationMenuView().getChildAt(pos);
@@ -40,20 +39,21 @@ public class NitroBottomNavigationView extends BottomNavigationView {
     }
   }
   
-  protected NotificationBadge getBadgeView(ViewGroup parent) {
+  protected NotificationBadge getBadgeView (ViewGroup parent) {
     return new NotificationBadge() {
       View view;
       TextView textView;
       
       @Override
-      public View getView() {
-        this.view = LayoutInflater.from(getContext()).inflate(R.layout.notification_badge_view, parent);
+      public View getView () {
+        this.view = LayoutInflater.from(getContext())
+                                  .inflate(R.layout.notification_badge_view, parent);
         this.textView = this.view.findViewById(R.id.notif_badge_text);
         return view;
       }
       
       @Override
-      public void setNotificationCount(int count) {
+      public void setNotificationCount (int count) {
         if (count > 0) {
           if (count < 10) {
             textView.setText(String.valueOf(count));
@@ -68,13 +68,13 @@ public class NitroBottomNavigationView extends BottomNavigationView {
       }
       
       @Override
-      public void setVisibility(int mode) {
+      public void setVisibility (int mode) {
         getView().setVisibility(mode);
       }
     };
   }
   
-  public final void updateNotificationCount(int position, int notificationCount) {
+  public final void updateNotificationCount (int position, int notificationCount) {
     
     BottomNavigationItemView tab = (BottomNavigationItemView) getBottomNavigationMenuView().getChildAt(position);
     NotificationBadge badge;
@@ -90,7 +90,7 @@ public class NitroBottomNavigationView extends BottomNavigationView {
     
   }
   
-  private BottomNavigationMenuView getBottomNavigationMenuView() {
+  private BottomNavigationMenuView getBottomNavigationMenuView () {
     if (this.bottomNavMenu == null) {
       bottomNavMenu = (BottomNavigationMenuView) getChildAt(0);
     }
@@ -99,11 +99,11 @@ public class NitroBottomNavigationView extends BottomNavigationView {
   
   public interface NotificationBadge {
     
-    View getView();
+    View getView ();
     
-    void setNotificationCount(int count);
+    void setNotificationCount (int count);
     
-    void setVisibility(@Visibility.Mode int mode);
+    void setVisibility (@Visibility.Mode int mode);
     
   }
 }

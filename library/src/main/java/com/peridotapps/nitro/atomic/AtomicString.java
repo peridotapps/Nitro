@@ -4,16 +4,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class AtomicString extends AtomicReference<String> {
   
-  public AtomicString() {
+  public AtomicString () {
     super();
   }
   
-  public AtomicString(String value) {
+  public AtomicString (String value) {
     super(value);
   }
   
   @Override
-  public String toString() {
+  public String toString () {
     return get();
   }
+  
 }

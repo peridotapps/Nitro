@@ -3,7 +3,6 @@ package com.peridotapps.nitro.hardware;
 import android.content.res.Resources;
 import android.support.annotation.IntDef;
 import android.util.DisplayMetrics;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,104 +16,102 @@ import static java.lang.annotation.ElementType.PARAMETER;
 
 public final class Screen {
   
-  private Screen() {
+  private Screen () {
   }
   
   private static final AtomicReference<DisplayMetrics> atomicDisplayMetrics = new AtomicReference<>(initDisplayMetrics());
   
   private static final AtomicReference<Double> atomicDisplaySizeInches = new AtomicReference<>(0.0D);
   
-  private static DisplayMetrics initDisplayMetrics() {
-    return Resources.getSystem().getDisplayMetrics();
+  private static DisplayMetrics initDisplayMetrics () {
+    return Resources.getSystem()
+                    .getDisplayMetrics();
   }
   
-  private static DisplayMetrics getDisplayMetrics() {
+  private static DisplayMetrics getDisplayMetrics () {
     synchronized (atomicDisplayMetrics) {
       return atomicDisplayMetrics.get();
     }
   }
   
-  private static double getDisplaySizeInInchesAtomic() {
+  private static double getDisplaySizeInInchesAtomic () {
     synchronized (atomicDisplaySizeInches) {
       return atomicDisplaySizeInches.get();
     }
   }
   
-  private static void setDisplaySizeInchesAtomic(double size) {
+  private static void setDisplaySizeInchesAtomic (double size) {
     synchronized (atomicDisplaySizeInches) {
       atomicDisplaySizeInches.set(size);
     }
   }
   
-  public static double getDeviceScreenSizeInInches() {
+  public static double getDeviceScreenSizeInInches () {
     return getDeviceScreenSizeInInches(getDisplayMetrics());
   }
   
-  public static double getDeviceDisplayHeightInches() {
+  public static double getDeviceDisplayHeightInches () {
     return getDeviceDisplayHeightInches(getDisplayMetrics());
   }
   
-  public static double getDeviceDisplayWidthInches() {
+  public static double getDeviceDisplayWidthInches () {
     return getDeviceDisplayWidthInches(getDisplayMetrics());
   }
   
-  public static double getDeviceDisplayHeightPixels() {
+  public static double getDeviceDisplayHeightPixels () {
     return getDeviceDisplayHeightPixels(getDisplayMetrics());
   }
   
-  public static double getDeviceDisplayWidthPixels() {
+  public static double getDeviceDisplayWidthPixels () {
     return getDeviceDisplayWidthPixels(getDisplayMetrics());
   }
   
   @ScreenOrientation
-  public static int getDeviceOrientation() {
-    return Resources.getSystem().getConfiguration().orientation;
+  public static int getDeviceOrientation () {
+    return Resources.getSystem()
+                    .getConfiguration().orientation;
   }
   
-  public static ScreenDimension getScreenDimensions() {
+  public static ScreenDimension getScreenDimensions () {
     DisplayMetrics dm = getDisplayMetrics();
     
     return new ScreenDimension(getDeviceScreenSizeInInches(dm), getDeviceDisplayWidthInches(dm), getDeviceDisplayHeightInches(dm), getDeviceDisplayWidthPixels(dm), getDeviceDisplayHeightPixels(dm), getDeviceOrientation(), dm.densityDpi);
   }
   
-  private static double getDeviceScreenSizeInInches(DisplayMetrics dm) {
+  private static double getDeviceScreenSizeInInches (DisplayMetrics dm) {
     double size = getDisplaySizeInInchesAtomic();
     
     if (size <= 0.0D) {
-      size =
-          Math.sqrt(Math.pow(getDeviceDisplayWidthInches(dm), 2) + Math.pow(getDeviceDisplayHeightInches(dm), 2));
+      size = Math.sqrt(Math.pow(getDeviceDisplayWidthInches(dm), 2) + Math.pow(getDeviceDisplayHeightInches(dm), 2));
       setDisplaySizeInchesAtomic(size);
     }
     
     return size;
   }
   
-  private static double getDeviceDisplayHeightInches(DisplayMetrics dm) {
+  private static double getDeviceDisplayHeightInches (DisplayMetrics dm) {
     return getInchesFromPixelsAndDensity(getDeviceDisplayHeightPixels(dm), dm);
   }
   
-  private static double getDeviceDisplayWidthInches(DisplayMetrics dm) {
+  private static double getDeviceDisplayWidthInches (DisplayMetrics dm) {
     return getInchesFromPixelsAndDensity(getDeviceDisplayWidthPixels(dm), dm);
   }
   
-  private static int getDeviceDisplayHeightPixels(DisplayMetrics dm) {
+  private static int getDeviceDisplayHeightPixels (DisplayMetrics dm) {
     return dm.heightPixels;
   }
   
-  private static int getDeviceDisplayWidthPixels(DisplayMetrics dm) {
+  private static int getDeviceDisplayWidthPixels (DisplayMetrics dm) {
     return dm.widthPixels;
   }
   
-  private static double getInchesFromPixelsAndDensity(int pixelCount, DisplayMetrics dm) {
+  private static double getInchesFromPixelsAndDensity (int pixelCount, DisplayMetrics dm) {
     return (double) pixelCount / (double) dm.densityDpi;
   }
   
   @Documented
   @Target({METHOD, PARAMETER, FIELD, LOCAL_VARIABLE})
-  @IntDef({
-      ORIENTATION_LANDSCAPE,
-      ORIENTATION_PORTRAIT
-  })
+  @IntDef({ORIENTATION_LANDSCAPE, ORIENTATION_PORTRAIT})
   public @interface ScreenOrientation {
   }
   
@@ -129,7 +126,7 @@ public final class Screen {
     private int orientation;
     private int density;
     
-    private ScreenDimension(double screenSizeInches, double widthInches, double heightInches, double widthPixels, double heightPixels, @ScreenOrientation int orientation, int density) {
+    private ScreenDimension (double screenSizeInches, double widthInches, double heightInches, double widthPixels, double heightPixels, @ScreenOrientation int orientation, int density) {
       this.screenSizeInches = screenSizeInches;
       this.widthInches = widthInches;
       this.heightInches = heightInches;
@@ -139,32 +136,32 @@ public final class Screen {
       this.density = density;
     }
     
-    public double getScreenSizeInches() {
+    public double getScreenSizeInches () {
       return screenSizeInches;
     }
     
-    public double getWidthInches() {
+    public double getWidthInches () {
       return widthInches;
     }
     
-    public double getHeightInches() {
+    public double getHeightInches () {
       return heightInches;
     }
     
-    public double getWidthPixels() {
+    public double getWidthPixels () {
       return widthPixels;
     }
     
-    public double getHeightPixels() {
+    public double getHeightPixels () {
       return heightPixels;
     }
     
     @ScreenOrientation
-    public int getOrientation() {
+    public int getOrientation () {
       return orientation;
     }
     
-    public int getDensity() {
+    public int getDensity () {
       return density;
     }
   }

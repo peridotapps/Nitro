@@ -23,7 +23,7 @@ public enum CharacterSet {
   private static final String CHAR_SET_NUMERIC = "0123456789";
   private static final String CHAR_SET_SYMBOLS = "~`!@#$%^&*()_-+={[}]|:;'<,>.?";
   
-  public String getCharacters() {
+  public String getCharacters () {
     StringBuilder charSet = new StringBuilder();
     
     if (addAlphaLower()) {
@@ -45,7 +45,7 @@ public enum CharacterSet {
     return charSet.toString();
   }
   
-  private boolean addSymbols() {
+  private boolean addSymbols () {
     switch (this) {
       case ALPHA_LOWER_NUMERIC_SYMBOLS:
       case ALPHA_LOWER_SYMBOLS:
@@ -61,7 +61,7 @@ public enum CharacterSet {
     }
   }
   
-  private boolean addNumeric() {
+  private boolean addNumeric () {
     switch (this) {
       case ALPHA_LOWER_NUMERIC:
       case ALPHA_LOWER_NUMERIC_SYMBOLS:
@@ -77,7 +77,7 @@ public enum CharacterSet {
     }
   }
   
-  private boolean addAlphaUpper() {
+  private boolean addAlphaUpper () {
     switch (this) {
       case ALPHA:
       case ALPHA_NUMERIC:
@@ -93,7 +93,7 @@ public enum CharacterSet {
     }
   }
   
-  private boolean addAlphaLower() {
+  private boolean addAlphaLower () {
     switch (this) {
       case ALPHA:
       case ALPHA_LOWER:

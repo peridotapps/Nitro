@@ -6,21 +6,23 @@ public interface Task {
   int STEP_ON_RUN = 1;
   int STEP_ON_COMPLETE = 2;
   
-  void onStart();
+  void run();
   
-  void onStop();
+  void onStart ();
   
-  void onCompleted();
+  void onStop ();
   
-  void onFailed(Throwable t);
+  void onCompleted ();
+  
+  void onFailed (Throwable t);
   
   interface TaskListener {
     
-    void started();
+    void started ();
     
-    void completed();
+    void completed ();
     
-    void failed(Throwable t);
+    void failed (Throwable t);
     
   }
 }

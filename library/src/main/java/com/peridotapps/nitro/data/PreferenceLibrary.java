@@ -4,11 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-
 import com.peridotapps.nitro.NitroApplication;
 import com.peridotapps.nitro.atomic.AtomicString;
 import com.peridotapps.nitro.logging.Logger;
-
 import java.io.InvalidClassException;
 import java.util.Map;
 import java.util.Set;
@@ -25,16 +23,17 @@ public class PreferenceLibrary {
   private final AtomicReference<SharedPreferences> sharedPreferences = new AtomicReference<>();
   private final AtomicReference<Map<String, Object>> preferenceCache = new AtomicReference<>(new TreeMap<>());
   
-  private PreferenceLibrary() {
+  private PreferenceLibrary () {
   }
   
-  private void setPreferenceCache(Map<String, ?> all) {
+  private void setPreferenceCache (Map<String, ?> all) {
     synchronized (preferenceCache) {
-      this.preferenceCache.get().putAll(all);
+      this.preferenceCache.get()
+                          .putAll(all);
     }
   }
   
-  private Map<String, Object> getPreferenceCache() {
+  private Map<String, Object> getPreferenceCache () {
     Map<String, Object> prefCache;
     synchronized (preferenceCache) {
       prefCache = preferenceCache.get();
@@ -42,34 +41,35 @@ public class PreferenceLibrary {
     return prefCache;
   }
   
-  private void setAccessMode(int accessMode) {
+  private void setAccessMode (int accessMode) {
     synchronized (this.accessMode) {
       this.accessMode.set(accessMode);
     }
   }
   
-  private int getAccessMode() {
+  private int getAccessMode () {
     synchronized (this.accessMode) {
       return this.accessMode.get();
     }
   }
   
-  private void setLibraryIdentifier(String libraryIdentifier) {
+  private void setLibraryIdentifier (String libraryIdentifier) {
     synchronized (preferenceLibraryIdentifier) {
       this.preferenceLibraryIdentifier.set(libraryIdentifier);
     }
   }
   
-  private String getLibraryIdentifier() {
+  private String getLibraryIdentifier () {
     synchronized (preferenceLibraryIdentifier) {
       return preferenceLibraryIdentifier.get();
     }
   }
   
-  private SharedPreferences getSharedPreferences() {
+  private SharedPreferences getSharedPreferences () {
     synchronized (sharedPreferences) {
       if (sharedPreferences.get() == null) {
-        this.sharedPreferences.set(NitroApplication.getSharedInstance().getSharedPreferences(getLibraryIdentifier(), getAccessMode()));
+        this.sharedPreferences.set(NitroApplication.getSharedInstance()
+                                                   .getSharedPreferences(getLibraryIdentifier(), getAccessMode()));
       }
     }
     
@@ -77,16 +77,14 @@ public class PreferenceLibrary {
   }
   
   @SuppressWarnings("unchecked")
-  private <T> T readPreference(String identifier, T defaultValue) {
+  private <T> T readPreference (String identifier, T defaultValue) {
     
     SharedPreferences preferences = getSharedPreferences();
     Map<String, Object> preferencesCache = getPreferenceCache();
     
-    Object returnValue = preferencesCache.containsKey(identifier)
-        ? preferencesCache.get(identifier)
-        : (preferences.getAll().containsKey(identifier))
-        ? preferences.getAll().get(identifier)
-        : null;
+    Object returnValue = preferencesCache.containsKey(identifier) ? preferencesCache.get(identifier) : (preferences.getAll()
+                                                                                                                   .containsKey(identifier)) ? preferences.getAll()
+                                                                                                                                                          .get(identifier) : null;
     
     if (returnValue != null) {
       return (T) returnValue;
@@ -97,7 +95,7 @@ public class PreferenceLibrary {
   
   @SuppressWarnings("unchecked")
   @SuppressLint("ApplySharedPref")
-  private <T> void writePreference(String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
+  private <T> void writePreference (String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
     SharedPreferences.Editor preferencesEditor = getSharedPreferences().edit();
     
     if (value instanceof String) {
@@ -125,11 +123,13 @@ public class PreferenceLibrary {
     getPreferenceCache().put(identifier, value);
   }
   
-  public boolean removePreference(String identifier) {
+  public boolean removePreference (String identifier) {
     try {
       SharedPreferences preferences = getSharedPreferences();
       getPreferenceCache().remove(identifier);
-      preferences.edit().remove(identifier).apply();
+      preferences.edit()
+                 .remove(identifier)
+                 .apply();
       return true;
     } catch (Exception e) {
       Logger.E(this, e);
@@ -137,7 +137,7 @@ public class PreferenceLibrary {
     }
   }
   
-  public boolean clearPreferences() {
+  public boolean clearPreferences () {
     try {
       SharedPreferences.Editor editor = getSharedPreferences().edit();
       editor.clear();
@@ -149,36 +149,31 @@ public class PreferenceLibrary {
     }
   }
   
-  public String getPreference(String identifier, String defaultValue) {
+  public String getPreference (String identifier, String defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  
-  public Long getPreference(String identifier, Long defaultValue) {
+  public Long getPreference (String identifier, Long defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  
-  public Integer getPreference(String identifier, Integer defaultValue) {
+  public Integer getPreference (String identifier, Integer defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  
-  public Float getPreference(String identifier, Float defaultValue) {
+  public Float getPreference (String identifier, Float defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  
-  public Boolean getPreference(String identifier, Boolean defaultValue) {
+  public Boolean getPreference (String identifier, Boolean defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  
-  public Set<String> getPreference(String identifier, Set<String> defaultValue) {
+  public Set<String> getPreference (String identifier, Set<String> defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public PreferenceLibrary applyPreference(String identifier, @NonNull String value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull String value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -187,8 +182,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary applyPreference(String identifier, @NonNull Integer value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull Integer value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -197,8 +191,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary applyPreference(String identifier, @NonNull Long value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull Long value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -207,8 +200,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary applyPreference(String identifier, @NonNull Float value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull Float value) {
     try {
       writePreference(identifier, value, false);
       
@@ -218,8 +210,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary applyPreference(String identifier, @NonNull Boolean value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull Boolean value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -228,8 +219,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary applyPreference(String identifier, @NonNull Set<String> value) {
+  public PreferenceLibrary applyPreference (String identifier, @NonNull Set<String> value) {
     try {
       writePreference(identifier, value, false);
       
@@ -239,8 +229,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull String value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull String value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -250,8 +239,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull Integer value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull Integer value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -261,8 +249,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull Long value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull Long value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -272,8 +259,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull Float value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull Float value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -283,8 +269,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull Boolean value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull Boolean value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -294,8 +279,7 @@ public class PreferenceLibrary {
     return this;
   }
   
-  
-  public PreferenceLibrary commitPreference(String identifier, @NonNull Set<String> value) {
+  public PreferenceLibrary commitPreference (String identifier, @NonNull Set<String> value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -304,28 +288,28 @@ public class PreferenceLibrary {
     
     return this;
   }
-  
   
   public static class Builder {
     
     PreferenceLibrary library = new PreferenceLibrary();
     
-    public Builder() {
+    public Builder () {
     
     }
     
-    public Builder setAccessMode(int accessMode) {
+    public Builder setAccessMode (int accessMode) {
       this.library.setAccessMode(accessMode);
       return this;
     }
     
-    public Builder setIdentifier(String identifier) {
+    public Builder setIdentifier (String identifier) {
       this.library.setLibraryIdentifier(identifier);
       return this;
     }
     
-    public PreferenceLibrary build() {
-      this.library.setPreferenceCache(this.library.getSharedPreferences().getAll());
+    public PreferenceLibrary build () {
+      this.library.setPreferenceCache(this.library.getSharedPreferences()
+                                                  .getAll());
       return this.library;
     }
   }

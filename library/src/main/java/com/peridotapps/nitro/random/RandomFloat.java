@@ -3,25 +3,23 @@ package com.peridotapps.nitro.random;
 import java.util.Random;
 
 public final class RandomFloat extends RandomNumber<Float> {
-  
-  public RandomFloat() {
+
+  public RandomFloat () {
     super(Float.MIN_VALUE, Float.MAX_VALUE);
   }
-  
-  public RandomFloat(float maxValue) {
+
+  public RandomFloat (float maxValue) {
     super(Float.MIN_VALUE, maxValue);
   }
-  
-  public RandomFloat(float minValue, float maxValue) {
+
+  public RandomFloat (float minValue, float maxValue) {
     super(minValue, maxValue);
   }
-  
+
   @Override
-  protected Float onGenerate(Random r) {
+  protected Float onGenerate (Random r) {
     float randomVal = r.nextFloat();
-    
-    return (randomVal >= getMinValue() && randomVal <= getMaxValue())
-        ? randomVal
-        : generate();
+
+    return (randomVal >= getMinValue() && randomVal <= getMaxValue()) ? randomVal : generate();
   }
 }

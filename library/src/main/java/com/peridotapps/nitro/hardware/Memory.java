@@ -3,15 +3,13 @@ package com.peridotapps.nitro.hardware;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
-
 import com.peridotapps.nitro.NitroApplication;
-
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class Memory {
   
-  private Memory() {
+  private Memory () {
   }
   
   private static final long BYTES_IN_MEGABYTE = 0x100000L;
@@ -19,10 +17,9 @@ public final class Memory {
   
   private static final AtomicLong totalMemory = new AtomicLong(0L);
   
-  private static final AtomicReference<ActivityManager> activityManagerAtomicReference =
-      new AtomicReference<>(initActivityManager());
+  private static final AtomicReference<ActivityManager> activityManagerAtomicReference = new AtomicReference<>(initActivityManager());
   
-  private static ActivityManager getActivityManagerInstance() {
+  private static ActivityManager getActivityManagerInstance () {
     synchronized (activityManagerAtomicReference) {
       if (activityManagerAtomicReference.get() == null) {
         activityManagerAtomicReference.set(initActivityManager());
@@ -31,7 +28,7 @@ public final class Memory {
     return activityManagerAtomicReference.get();
   }
   
-  public static long getTotalMemory() {
+  public static long getTotalMemory () {
     long memoryTotal;
     
     memoryTotal = getMemoryTotal();
@@ -49,32 +46,34 @@ public final class Memory {
     return memoryTotal;
   }
   
-  public static long getFreeMemory() {
+  public static long getFreeMemory () {
     return getMemoryInfoFromActivityManager().availMem / BYTES_IN_MEGABYTE;
   }
   
-  public static long getUsedMemory() {
+  public static long getUsedMemory () {
     return getTotalMemory() - getFreeMemory();
   }
   
-  private static ActivityManager initActivityManager() {
-    return (ActivityManager) NitroApplication.getSharedInstance().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+  private static ActivityManager initActivityManager () {
+    return (ActivityManager) NitroApplication.getSharedInstance()
+                                             .getApplicationContext()
+                                             .getSystemService(Context.ACTIVITY_SERVICE);
   }
   
-  private static ActivityManager.MemoryInfo getMemoryInfoFromActivityManager() {
+  private static ActivityManager.MemoryInfo getMemoryInfoFromActivityManager () {
     ActivityManager activityManager = getActivityManagerInstance();
     ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
     activityManager.getMemoryInfo(mi);
     return mi;
   }
   
-  private static void setMemoryTotal(long memoryTotal) {
+  private static void setMemoryTotal (long memoryTotal) {
     synchronized (totalMemory) {
       totalMemory.set(memoryTotal);
     }
   }
   
-  private static long getMemoryTotal() {
+  private static long getMemoryTotal () {
     long memoryTotal;
     synchronized (totalMemory) {
       memoryTotal = totalMemory.get();

@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.peridotapps.nitro.hardware.Network;
 import com.peridotapps.nitro.ui.core.INitroWindow;
 import com.peridotapps.nitro.ui.view.NitroProgressView;
@@ -22,13 +21,13 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
   private View view;
   
   @Override
-  public void attachLayout() {
+  public void attachLayout () {
     view = inflater.inflate(getLayoutResourceId(), container, shouldAttachToRoot());
   }
   
   @Nullable
   @Override
-  public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+  public final View onCreateView (LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     setCreateProperties(inflater, container);
     setHasOptionsMenu(hasMenu());
     attachLayout();
@@ -39,31 +38,33 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
   
   @CallSuper
   @Override
-  public void onResume() {
+  public void onResume () {
     super.onResume();
-    Network.getNetworkMonitor().addObserver(this);
+    Network.getNetworkMonitor()
+           .addObserver(this);
     bindData();
   }
   
   @CallSuper
   @Override
-  public void onPause() {
-    Network.getNetworkMonitor().removeObserver(this);
+  public void onPause () {
+    Network.getNetworkMonitor()
+           .removeObserver(this);
     super.onPause();
   }
   
   @Override
-  public void gatherControls() {
+  public void gatherControls () {
     // Stub
   }
   
   @Override
-  public void bindData() {
+  public void bindData () {
     // Stub
   }
   
   @Override
-  public final NitroProgressView getProgressView() {
+  public final NitroProgressView getProgressView () {
     if (getActivity() != null && getActivity() instanceof NitroActivity) {
       return ((NitroActivity) getActivity()).getProgressView();
     }
@@ -72,42 +73,42 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
   }
   
   @Override
-  public final <T extends View> T findViewById(@IdRes int id) {
+  public final <T extends View> T findViewById (@IdRes int id) {
     if (this.view != null) {
       return view.findViewById(id);
     }
     return null;
   }
   
-  public final boolean hasMenu() {
+  public final boolean hasMenu () {
     return this.getMenuResourceId() != null;
   }
   
   @Override
-  public final void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  public final void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
     if (hasMenu()) {
       inflater.inflate(getMenuResourceId(), menu);
     }
     super.onCreateOptionsMenu(menu, inflater);
   }
   
-  protected boolean shouldAttachToRoot() {
+  protected boolean shouldAttachToRoot () {
     return false;
   }
   
-  protected void handleCreateViewSavedInstanceState(Bundle savedInstanceState) {
+  protected void handleCreateViewSavedInstanceState (Bundle savedInstanceState) {
     // Stub
   }
   
-  protected final LayoutInflater getInflater() {
+  protected final LayoutInflater getInflater () {
     return inflater;
   }
   
-  protected final ViewGroup getContainer() {
+  protected final ViewGroup getContainer () {
     return container;
   }
   
-  private void setCreateProperties(LayoutInflater inflater, @Nullable ViewGroup container) {
+  private void setCreateProperties (LayoutInflater inflater, @Nullable ViewGroup container) {
     this.inflater = inflater;
     this.container = container;
   }

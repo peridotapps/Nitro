@@ -7,39 +7,31 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-
 import com.peridotapps.nitro.hardware.Cpu;
 import com.peridotapps.nitro.random.RandomString;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.peridotapps.nitro.string.CharacterSet.ALPHA_NUMERIC;
 
-final class TaskManager implements LifecycleObserver {
+final class TaskManager {
+  
+  private static final AtomicReference<TaskExecutor> sharedAtomicInstance = new AtomicReference<>(new TaskExecutor());
   
   private static final int INITIAL_THREAD_POOL_SIZE = 0;
-  private static final int THREAD_POOL_SIZE_MULTIPLIER = 8;
   private static final int MAX_THREAD_POOL_SIZE = 24;
+  private static final int TASK_ID_MAX_LENGTH = 25;
+  private static final int TASK_ID_MIN_LENGTH = 10;
+  private static final int THREAD_POOL_SIZE_MULTIPLIER = 8;
+  
   private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
-  private static final AtomicReference<TaskManager> sharedAtomicInstance = new AtomicReference<>(new TaskManager());
   
-  private final AtomicReference<Handler> handlerAtomicReference = new AtomicReference<>(initHandler());
-  private final AtomicReference<ScheduledExecutorService> scheduledExecutorServiceAtomicReference = new AtomicReference<>(initScheduledExecutorService());
-  private final AtomicReference<ExecutorService> executorServiceAtomicReference = new AtomicReference<>(initExecutorService());
-  
-  private final int threadPoolSize;
-  
-  static TaskManager getSharedInstance() {
-    TaskManager instance;
+  private static TaskExecutor getSharedInstance () {
+    TaskExecutor instance;
+    
     synchronized (sharedAtomicInstance) {
       if (sharedAtomicInstance.get() == null) {
-        sharedAtomicInstance.set(new TaskManager());
+        sharedAtomicInstance.set(new TaskExecutor());
       }
       instance = sharedAtomicInstance.get();
     }
@@ -47,114 +39,118 @@ final class TaskManager implements LifecycleObserver {
     return instance;
   }
   
-  static void execute(RunnableTask runnableTask) {
-    if (runnableTask.getTaskMode() == TaskMode.MAIN) {
-      executeOnMain(runnableTask);
-    } else {
-      executeOnNew(runnableTask);
-    }
-  }
-  
-  static <T> T execute(CallableTask<T> callableTask) throws ExecutionException, InterruptedException {
-    return getFuture(callableTask).get();
-  }
-  
-  static <T> Future<T> getFuture(CallableTask<T> callableTask) {
-    return getSharedInstance().getExecutorServiceInstance().submit(callableTask);
-  }
-  
-  private static void executeOnNew(RunnableTask runnableTask) {
-    if (runnableTask.getDelayInMilliseconds() > 0) {
-      getSharedInstance().getScheduledExecutorServiceInstance().schedule(runnableTask, runnableTask.getDelayInMilliseconds(), DEFAULT_TIME_UNIT);
-    } else {
-      getSharedInstance().getExecutorServiceInstance().execute(runnableTask);
-    }
-  }
-  
-  private static void executeOnMain(RunnableTask runnableTask) {
-    if (runnableTask.getDelayInMilliseconds() > 0) {
-      getSharedInstance().getHandlerInstance().postDelayed(runnableTask, runnableTask.getDelayInMilliseconds());
-    } else {
-      getSharedInstance().getHandlerInstance().post(runnableTask);
-    }
-  }
-  
-  private TaskManager() {
-    ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-    this.threadPoolSize = calculateThreadPoolLimits();
-    
-  }
-  
-  @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-  void resetTaskManager() {
-    getExecutorServiceInstance().shutdown();
-    getScheduledExecutorServiceInstance().shutdown();
-    executorServiceAtomicReference.set(null);
-    handlerAtomicReference.set(null);
-    scheduledExecutorServiceAtomicReference.set(null);
-    sharedAtomicInstance.set(null);
-  }
-  
-  static String generateTaskId() {
+  static String generateTaskId () {
     return new RandomString()
         .setCharacterSet(ALPHA_NUMERIC)
-        .setMinLength(10)
-        .setMaxLength(25)
+        .setMinLength(TASK_ID_MIN_LENGTH)
+        .setMaxLength(TASK_ID_MAX_LENGTH)
         .generate();
   }
   
-  @NonNull
-  Handler getHandlerInstance() {
-    synchronized (handlerAtomicReference) {
-      if (handlerAtomicReference.get() == null) {
-        handlerAtomicReference.set(initHandler());
-      }
+  static void execute (RunnableTask runnableTask) {
+    if (runnableTask.getTaskMode() == TaskMode.MAIN) {
+      executeOnMain(runnableTask, runnableTask.getDelayInMilliseconds());
+    } else {
+      executeOnNew(runnableTask, runnableTask.getDelayInMilliseconds());
+    }
+  }
+  
+  static <T> T execute (CallableTask<T> callableTask) throws ExecutionException, InterruptedException {
+    return getFuture(callableTask).get();
+  }
+  
+  static <T> Future<T> getFuture (CallableTask<T> callableTask) {
+    return getSharedInstance()
+        .getExecutorServiceInstance()
+        .submit(callableTask);
+  }
+  
+  private static void executeOnNew (Runnable runnable, long delayInMilliseconds) {
+    if (delayInMilliseconds > 0) {
+      getSharedInstance()
+          .getScheduledExecutorServiceInstance()
+          .schedule(runnable, delayInMilliseconds, DEFAULT_TIME_UNIT);
+    } else {
+      getSharedInstance()
+          .getExecutorServiceInstance()
+          .execute(runnable);
+    }
+  }
+  
+  private static void executeOnMain (Runnable runnable, long delayInMilliseconds) {
+    if (delayInMilliseconds > 0) {
+      getSharedInstance()
+          .getHandlerInstance()
+          .postDelayed(runnable, delayInMilliseconds);
+    } else {
+      getSharedInstance()
+          .getHandlerInstance()
+          .post(runnable);
+    }
+  }
+  
+  static class TaskExecutor implements LifecycleObserver {
+  
+    private final ExecutorService executorServiceAtomicReference;
+    private final Handler handlerAtomicReference;
+    private final ScheduledExecutorService scheduledExecutorServiceAtomicReference;
+    private final int threadPoolSize;
+    
+    TaskExecutor () {
+      ProcessLifecycleOwner.get()
+                           .getLifecycle()
+                           .addObserver(this);
+      
+      this.threadPoolSize = this.calculateThreadPoolLimits();
+      this.executorServiceAtomicReference = this.initExecutorService();
+      this.handlerAtomicReference = this.initHandler();
+      this.scheduledExecutorServiceAtomicReference = this.initScheduledExecutorService();
     }
     
-    return handlerAtomicReference.get();
-  }
+    @NonNull
+    private Handler getHandlerInstance () {
+      return handlerAtomicReference;
+    }
   
-  @NonNull
-  ScheduledExecutorService getScheduledExecutorServiceInstance() {
-    synchronized (scheduledExecutorServiceAtomicReference) {
-      if (scheduledExecutorServiceAtomicReference.get() == null) {
-        scheduledExecutorServiceAtomicReference.set(initScheduledExecutorService());
-      }
+    @NonNull
+    private ScheduledExecutorService getScheduledExecutorServiceInstance () {
+      return scheduledExecutorServiceAtomicReference;
+    }
+  
+    @NonNull
+    private ExecutorService getExecutorServiceInstance () {
+      return executorServiceAtomicReference;
+    }
+  
+    @NonNull
+    private Handler initHandler () {
+      return new Handler(Looper.getMainLooper());
+    }
+  
+    @NonNull
+    private ScheduledExecutorService initScheduledExecutorService () {
+      return Executors
+          .newScheduledThreadPool(INITIAL_THREAD_POOL_SIZE);
+    }
+  
+    @NonNull
+    private ExecutorService initExecutorService () {
+      return Executors
+          .newFixedThreadPool(this.threadPoolSize);
+    }
+  
+    private int calculateThreadPoolLimits () {
+      return (Cpu.getNumberOfProcessorCores() * THREAD_POOL_SIZE_MULTIPLIER > MAX_THREAD_POOL_SIZE)
+             ? MAX_THREAD_POOL_SIZE
+             : Cpu.getNumberOfProcessorCores() * THREAD_POOL_SIZE_MULTIPLIER;
+    }
+  
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    void resetTaskManager () {
+      getExecutorServiceInstance().shutdown();
+      getScheduledExecutorServiceInstance().shutdown();
+      sharedAtomicInstance.set(null);
     }
     
-    return scheduledExecutorServiceAtomicReference.get();
   }
-  
-  @NonNull
-  ExecutorService getExecutorServiceInstance() {
-    synchronized (executorServiceAtomicReference) {
-      if (executorServiceAtomicReference.get() == null) {
-        executorServiceAtomicReference.set(initExecutorService());
-      }
-    }
-    
-    return executorServiceAtomicReference.get();
-  }
-  
-  @NonNull
-  private Handler initHandler() {
-    return new Handler(Looper.getMainLooper());
-  }
-  
-  @NonNull
-  private ScheduledExecutorService initScheduledExecutorService() {
-    return Executors.newScheduledThreadPool(INITIAL_THREAD_POOL_SIZE);
-  }
-  
-  @NonNull
-  private ExecutorService initExecutorService() {
-    return Executors.newFixedThreadPool(this.threadPoolSize);
-  }
-  
-  private int calculateThreadPoolLimits() {
-    return (Cpu.getNumberOfProcessorCores() * THREAD_POOL_SIZE_MULTIPLIER > MAX_THREAD_POOL_SIZE)
-        ? MAX_THREAD_POOL_SIZE
-        : Cpu.getNumberOfProcessorCores() * THREAD_POOL_SIZE_MULTIPLIER;
-  }
-  
 }

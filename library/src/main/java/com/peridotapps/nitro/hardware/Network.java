@@ -7,9 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
-
 import com.peridotapps.nitro.NitroApplication;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,11 +16,12 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 
 public final class Network {
   
-  private static final AtomicReference<ConnectivityManager> connectivityManagerAtomicReference = new AtomicReference<>((ConnectivityManager) NitroApplication.getSharedInstance().getSystemService(Context.CONNECTIVITY_SERVICE));
+  private static final AtomicReference<ConnectivityManager> connectivityManagerAtomicReference = new AtomicReference<>((ConnectivityManager) NitroApplication.getSharedInstance()
+                                                                                                                                                             .getSystemService(Context.CONNECTIVITY_SERVICE));
   private static final AtomicReference<NetworkMonitor> networkMonitor = new AtomicReference<>(new NetworkMonitor());
   private static final AtomicReference<NetworkReceiver> networkReceiver = new AtomicReference<>(new NetworkReceiver());
   
-  public static NetworkMonitor getNetworkMonitor() {
+  public static NetworkMonitor getNetworkMonitor () {
     NetworkMonitor monitor;
     
     synchronized (networkMonitor) {
@@ -36,7 +35,7 @@ public final class Network {
     return monitor;
   }
   
-  public static BroadcastReceiver getNetworkReceiver() {
+  public static BroadcastReceiver getNetworkReceiver () {
     BroadcastReceiver receiver;
     synchronized (networkReceiver) {
       if (networkReceiver.get() == null) {
@@ -48,16 +47,17 @@ public final class Network {
     return receiver;
   }
   
-  public static NetworkInfo getActiveNetwork() {
+  public static NetworkInfo getActiveNetwork () {
     return getConnectivityManager().getActiveNetworkInfo();
   }
   
-  private static ConnectivityManager getConnectivityManager() {
+  private static ConnectivityManager getConnectivityManager () {
     ConnectivityManager instance;
     
     synchronized (connectivityManagerAtomicReference) {
       if (connectivityManagerAtomicReference.get() == null) {
-        connectivityManagerAtomicReference.set((ConnectivityManager) NitroApplication.getSharedInstance().getSystemService(Context.CONNECTIVITY_SERVICE));
+        connectivityManagerAtomicReference.set((ConnectivityManager) NitroApplication.getSharedInstance()
+                                                                                     .getSystemService(Context.CONNECTIVITY_SERVICE));
       }
       instance = connectivityManagerAtomicReference.get();
     }
@@ -65,22 +65,22 @@ public final class Network {
     return instance;
   }
   
-  private Network() {
+  private Network () {
   }
   
-  public static boolean isConnected() {
+  public static boolean isConnected () {
     NetworkInfo activeNetwork = getActiveNetwork();
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
   
-  public static boolean isMeteredNetwork() {
+  public static boolean isMeteredNetwork () {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       return getConnectivityManager().isActiveNetworkMetered();
     }
     return false;
   }
   
-  public static boolean isWifi() {
+  public static boolean isWifi () {
     return getActiveNetwork().getType() == TYPE_WIFI;
   }
   
@@ -88,10 +88,10 @@ public final class Network {
     
     private final List<NetworkStatusObserver> observers = new LinkedList<>();
     
-    private NetworkMonitor() {
+    private NetworkMonitor () {
     }
     
-    private void notifyStatusChange(boolean connected) {
+    private void notifyStatusChange (boolean connected) {
       synchronized (observers) {
         if (observers.size() > 0) {
           for (NetworkStatusObserver listener : observers) {
@@ -105,17 +105,17 @@ public final class Network {
       }
     }
     
-    public void addObserver(@NonNull NetworkStatusObserver listener) {
+    public void addObserver (@NonNull NetworkStatusObserver listener) {
       if (!observers.contains(listener)) {
         observers.add(listener);
       }
     }
     
-    public void removeObserver(@NonNull NetworkStatusObserver listener) {
+    public void removeObserver (@NonNull NetworkStatusObserver listener) {
       observers.remove(listener);
     }
     
-    public void clearObservers() {
+    public void clearObservers () {
       observers.clear();
     }
     
@@ -123,18 +123,20 @@ public final class Network {
   
   private final static class NetworkReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent) {
-      if (intent.getAction() != null
-          && (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)))
-        
+    public void onReceive (Context context, Intent intent) {
+      if (intent.getAction() != null && (intent.getAction()
+                                               .equals(ConnectivityManager.CONNECTIVITY_ACTION)))
+
+      {
         getNetworkMonitor().notifyStatusChange(isConnected());
+      }
       
     }
   }
   
   public interface NetworkStatusObserver {
-    void onNetworkConnected();
+    void onNetworkConnected ();
     
-    void onNetworkDisconnected();
+    void onNetworkDisconnected ();
   }
 }

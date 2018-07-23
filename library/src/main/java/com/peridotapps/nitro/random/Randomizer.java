@@ -2,21 +2,19 @@ package com.peridotapps.nitro.random;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.peridotapps.nitro.concurrent.task.RunnableTask;
-
 import java.util.Random;
 
 public abstract class Randomizer<T> {
   
-  protected abstract T onGenerate(Random r);
+  protected abstract T onGenerate (Random r);
   
-  public final void generate(@NonNull RandomCallback<T> callback) {
+  public final void generate (@NonNull RandomCallback<T> callback) {
     generateAsync(callback).execute();
   }
   
   @Nullable
-  public final T generate() {
+  public final T generate () {
     try {
       return onGenerate(RandomUtil.getRandom());
     } catch (Exception e) {
@@ -24,24 +22,24 @@ public abstract class Randomizer<T> {
     }
   }
   
-  private RunnableTask generateAsync(@NonNull final RandomCallback<T> callback) {
+  private RunnableTask generateAsync (@NonNull final RandomCallback<T> callback) {
     return new RunnableTask() {
       
       private T value;
       
       @Override
-      public void onRun() throws Exception {
+      public void onRun () throws Exception {
         value = onGenerate(RandomUtil.getRandom());
       }
       
       @Override
-      public void onCompleted() {
+      public void onCompleted () {
         super.onCompleted();
         callback.onGenerated(value);
       }
       
       @Override
-      public void onFailed(Throwable t) {
+      public void onFailed (Throwable t) {
         super.onFailed(t);
         callback.onGenerated(null);
       }
@@ -49,6 +47,6 @@ public abstract class Randomizer<T> {
   }
   
   public interface RandomCallback<T> {
-    void onGenerated(T characters);
+    void onGenerated (T characters);
   }
 }

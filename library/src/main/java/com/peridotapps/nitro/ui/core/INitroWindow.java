@@ -1,30 +1,29 @@
 package com.peridotapps.nitro.ui.core;
 
 import android.support.annotation.MenuRes;
-
 import com.peridotapps.nitro.ui.view.NitroProgressView;
 
 public interface INitroWindow extends INitroView {
   
-  void attachLayout();
+  void attachLayout ();
   
   @MenuRes
-  Integer getMenuResourceId();
+  Integer getMenuResourceId ();
   
-  default NitroProgressView getProgressView() {
+  default NitroProgressView getProgressView () {
     return null;
   }
   
-  default void showProgressView() {
+  default void showProgressView () {
     if (getProgressView() != null) {
       getProgressView().showProgressView();
     }
   }
   
-  default void hideProgressView() {
+  default void hideProgressView () {
     if (getProgressView() != null) {
       getProgressView().hideProgressView();
     }
   }
-
+  
 }

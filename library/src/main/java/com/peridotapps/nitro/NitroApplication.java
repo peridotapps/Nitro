@@ -11,11 +11,9 @@ import android.net.ConnectivityManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.multidex.MultiDex;
-
 import com.peridotapps.nitro.hardware.Network;
 import com.peridotapps.nitro.logging.Logger;
 import com.peridotapps.nitro.ui.core.INitroUiConcurrent;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,29 +33,28 @@ public abstract class NitroApplication extends Application implements INitroUiCo
   private static final AtomicReference<NitroApplication> instance = new AtomicReference<>();
   private static final AtomicInteger applicationState = new AtomicInteger(ApplicationState.UNKNOWN);
   
-  
-  public static NitroApplication getSharedInstance() {
+  public static NitroApplication getSharedInstance () {
     synchronized (instance) {
       return instance.get();
     }
   }
   
-  private static void setSharedInstance(NitroApplication app) {
+  private static void setSharedInstance (NitroApplication app) {
     synchronized (instance) {
       instance.set(app);
     }
   }
   
   @ApplicationState
-  public int getApplicationState() {
+  public int getApplicationState () {
     return applicationState.get();
   }
   
-  private void setApplicationState(@ApplicationState int status) {
+  private void setApplicationState (@ApplicationState int status) {
     applicationState.set(status);
   }
   
-  public String getApplicationStatusString() {
+  public String getApplicationStatusString () {
     switch (getApplicationState()) {
       case ApplicationState.BACKGROUND:
         return APP_STATUS_STRING_BACKGROUND;
@@ -70,61 +67,68 @@ public abstract class NitroApplication extends Application implements INitroUiCo
   
   @CallSuper
   @Override
-  public void onCreate() {
+  public void onCreate () {
     super.onCreate();
+    
     NitroApplication.setSharedInstance(this);
-    ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-    Network.getNetworkMonitor().addObserver(this);
+    
+    ProcessLifecycleOwner.get()
+                         .getLifecycle()
+                         .addObserver(this);
+    
+    Network.getNetworkMonitor()
+           .addObserver(this);
+    
     registerBroadcastReceivers();
   }
   
   @CallSuper
-  public void onEnterForeground() {
+  public void onEnterForeground () {
     //stub
   }
   
   @CallSuper
-  public void onEnterBackground() {
+  public void onEnterBackground () {
     //stub
   }
   
   @CallSuper
-  public void registerBroadcastReceivers() {
+  public void registerBroadcastReceivers () {
     registerNetworkReceiver();
   }
   
   @CallSuper
-  public void unregisterBroadcastReceivers() {
+  public void unregisterBroadcastReceivers () {
     unregisterNetworkReceiver();
   }
   
-  public void onDeviceBootCompleted() {
+  public void onDeviceBootCompleted () {
     // Stub
   }
   
-  protected boolean isMultiDexEnabled() {
+  protected boolean isMultiDexEnabled () {
     return true;
   }
   
-  private void setupMultiDex() {
+  private void setupMultiDex () {
     if (isMultiDexEnabled()) {
       MultiDex.install(this);
     }
   }
   
   @CallSuper
-  protected void attachBaseContext(Context base) {
+  protected void attachBaseContext (Context base) {
     super.attachBaseContext(base);
     setupMultiDex();
   }
   
-  private void registerNetworkReceiver() {
+  private void registerNetworkReceiver () {
     IntentFilter filter = new IntentFilter();
     filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     getApplicationContext().registerReceiver(Network.getNetworkReceiver(), filter);
   }
   
-  private void unregisterNetworkReceiver() {
+  private void unregisterNetworkReceiver () {
     try {
       getApplicationContext().unregisterReceiver(Network.getNetworkReceiver());
     } catch (Exception e) {
@@ -133,13 +137,13 @@ public abstract class NitroApplication extends Application implements INitroUiCo
   }
   
   @OnLifecycleEvent(Lifecycle.Event.ON_START)
-  final void enterForeground() {
+  final void enterForeground () {
     setApplicationState(ApplicationState.FOREGROUND);
     onEnterForeground();
   }
   
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-  final void enterBackground() {
+  final void enterBackground () {
     setApplicationState(ApplicationState.BACKGROUND);
     onEnterBackground();
   }

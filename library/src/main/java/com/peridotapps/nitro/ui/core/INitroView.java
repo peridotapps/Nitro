@@ -7,12 +7,12 @@ import android.view.View;
 public interface INitroView extends INitroUiConcurrent {
   
   @LayoutRes
-  int getLayoutResourceId();
+  int getLayoutResourceId ();
   
-  void bindData();
+  void bindData ();
   
-  void gatherControls();
+  void gatherControls ();
   
-  <T extends View> T findViewById(@IdRes int resourceId);
-
+  <T extends View> T findViewById (@IdRes int resourceId);
+  
 }

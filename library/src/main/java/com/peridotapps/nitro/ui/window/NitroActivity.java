@@ -8,7 +8,6 @@ import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuInflater;
-
 import com.peridotapps.nitro.hardware.Network;
 import com.peridotapps.nitro.ui.core.INitroWindow;
 
@@ -20,29 +19,29 @@ abstract class NitroActivity extends Activity implements INitroWindow, Network.N
   @MenuRes
   private Integer menuResourceId;
   
-  public NitroActivity(@LayoutRes int layoutResourceId) {
+  public NitroActivity (@LayoutRes int layoutResourceId) {
     this(layoutResourceId, null);
   }
   
-  public NitroActivity(@LayoutRes int layoutResourceId, @MenuRes Integer menuResourceId) {
+  public NitroActivity (@LayoutRes int layoutResourceId, @MenuRes Integer menuResourceId) {
     this.layoutResourceId = layoutResourceId;
     this.menuResourceId = menuResourceId;
   }
   
   @LayoutRes
   @Override
-  public final int getLayoutResourceId() {
+  public final int getLayoutResourceId () {
     return layoutResourceId;
   }
   
   @MenuRes
   @Override
-  public final Integer getMenuResourceId() {
+  public final Integer getMenuResourceId () {
     return menuResourceId;
   }
   
   @Override
-  public final boolean onCreateOptionsMenu(Menu menu) {
+  public final boolean onCreateOptionsMenu (Menu menu) {
     if (getMenuResourceId() != null) {
       MenuInflater inflater = new MenuInflater(this);
       inflater.inflate(getMenuResourceId(), menu);
@@ -51,13 +50,13 @@ abstract class NitroActivity extends Activity implements INitroWindow, Network.N
   }
   
   @Override
-  public void attachLayout() {
+  public void attachLayout () {
     setContentView(getLayoutResourceId());
   }
   
   @CallSuper
   @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
+  protected void onCreate (@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     attachLayout();
     gatherControls();
@@ -65,26 +64,28 @@ abstract class NitroActivity extends Activity implements INitroWindow, Network.N
   
   @CallSuper
   @Override
-  protected void onResume() {
+  protected void onResume () {
     super.onResume();
-    Network.getNetworkMonitor().addObserver(this);
+    Network.getNetworkMonitor()
+           .addObserver(this);
     bindData();
   }
   
   @CallSuper
   @Override
-  protected void onPause() {
-    Network.getNetworkMonitor().removeObserver(this);
+  protected void onPause () {
+    Network.getNetworkMonitor()
+           .removeObserver(this);
     super.onPause();
   }
   
   @Override
-  public void gatherControls() {
+  public void gatherControls () {
     // Stub
   }
   
   @Override
-  public void bindData() {
+  public void bindData () {
     // Stub
   }
 }
