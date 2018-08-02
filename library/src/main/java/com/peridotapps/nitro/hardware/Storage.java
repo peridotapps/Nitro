@@ -1,6 +1,8 @@
 package com.peridotapps.nitro.hardware;
 
 import android.os.Environment;
+import android.support.annotation.NonNull;
+
 import java.io.File;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -77,6 +79,7 @@ public final class Storage {
     }
   }
   
+  @NonNull
   private static File getInternalStorageFile () {
     synchronized (internalFileAtomicReference) {
       if (internalFileAtomicReference.get() == null) {
@@ -87,6 +90,7 @@ public final class Storage {
     return internalFileAtomicReference.get();
   }
   
+  @NonNull
   private static File getExternalStorageFile () {
     synchronized (externalFileAtomicReference) {
       if (externalFileAtomicReference.get() == null) {
@@ -97,10 +101,12 @@ public final class Storage {
     return externalFileAtomicReference.get();
   }
   
+  @NonNull
   private static File initRootDirectoryFile () {
     return Environment.getRootDirectory();
   }
   
+  @NonNull
   private static File initExternalDirectoryFile () {
     return Environment.getExternalStorageDirectory();
   }

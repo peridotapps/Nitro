@@ -2,6 +2,9 @@ package com.peridotapps.nitro.concurrent.task;
 
 import android.os.Looper;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +27,7 @@ abstract class CoreTask implements Task {
     this(TaskManager.generateTaskId());
   }
   
-  public CoreTask (String taskId) {
+  public CoreTask (@NonNull String taskId) {
     this.taskId = taskId;
   }
   
@@ -80,10 +83,12 @@ abstract class CoreTask implements Task {
     }
   }
   
+  @Nullable
   public abstract <T> T doWork () throws Exception;
   
   @CallSuper
-  public CoreTask addProperty (String key, Object value) {
+  @NonNull
+  public CoreTask addProperty (@NonNull String key, @NonNull Object value) {
     synchronized (properties) {
       properties.put(key, value);
     }
@@ -91,7 +96,8 @@ abstract class CoreTask implements Task {
   }
   
   @CallSuper
-  public CoreTask addProperties (Map<String, Object> properties) {
+  @NonNull
+  public CoreTask addProperties (@NonNull Map<String, Object> properties) {
     synchronized (this.properties) {
       this.properties.putAll(properties);
     }
@@ -99,7 +105,8 @@ abstract class CoreTask implements Task {
   }
   
   @CallSuper
-  public CoreTask addListener (Task.TaskListener listener) {
+  @NonNull
+  public CoreTask addListener (@NonNull Task.TaskListener listener) {
     synchronized (listeners) {
       listeners.add(listener);
     }
@@ -107,7 +114,8 @@ abstract class CoreTask implements Task {
   }
   
   @CallSuper
-  public CoreTask addListeners (Collection<TaskListener> listenerCollection) {
+  @NonNull
+  public CoreTask addListeners (@NonNull Collection<TaskListener> listenerCollection) {
     synchronized (this.listeners) {
       listeners.addAll(listenerCollection);
     }
@@ -145,7 +153,7 @@ abstract class CoreTask implements Task {
   
   @CallSuper
   @Override
-  public void onFailed (Throwable t) {
+  public void onFailed (@NonNull Throwable t) {
     List<Task.TaskListener> listenerList = getListeners();
     if (listenerList != null && !listenerList.isEmpty()) {
       notifyFailure(listenerList, t);
@@ -164,7 +172,8 @@ abstract class CoreTask implements Task {
     this.stopRequested.set(true);
   }
   
-  public final String getTaskId () {
+  public final @NonNull
+  String getTaskId () {
     return taskId;
   }
   
@@ -184,7 +193,8 @@ abstract class CoreTask implements Task {
     return stop;
   }
   
-  public final Map<String, Object> getProperties () {
+  public final @NonNull
+  Map<String, Object> getProperties () {
     Map<String, Object> propertyMap;
     
     synchronized (this.properties) {
@@ -200,11 +210,12 @@ abstract class CoreTask implements Task {
     }
   }
   
-  public final Object getProperty (String key) {
+  public final @Nullable
+  Object getProperty (@NonNull String key) {
     return getProperties().get(key);
   }
   
-  public final void removeProperty (String key) {
+  public final void removeProperty (@NonNull String key) {
     synchronized (properties) {
       properties.remove(key);
     }
@@ -216,7 +227,7 @@ abstract class CoreTask implements Task {
     }
   }
   
-  public final void removeListener (Task.TaskListener listener) {
+  public final void removeListener (@NonNull Task.TaskListener listener) {
     synchronized (this.listeners) {
       listeners.remove(listener);
     }
@@ -234,17 +245,17 @@ abstract class CoreTask implements Task {
     }
   }
   
-  protected abstract void notifyStarted (final List<Task.TaskListener> listeners);
+  protected abstract void notifyStarted (@NonNull final List<Task.TaskListener> listeners);
   
-  protected abstract void notifyCompleted (final List<Task.TaskListener> listeners);
+  protected abstract void notifyCompleted (@NonNull final List<Task.TaskListener> listeners);
   
-  protected abstract void notifyFailure (final List<Task.TaskListener> listeners, final Throwable t);
+  protected abstract void notifyFailure (@NonNull final List<Task.TaskListener> listeners, @NonNull final Throwable t);
   
-  protected abstract void notifyTaskStarted (final Task.TaskListener listener);
+  protected abstract void notifyTaskStarted (@NonNull final Task.TaskListener listener);
   
-  protected abstract void notifyTaskCompleted (final Task.TaskListener listener);
+  protected abstract void notifyTaskCompleted (@NonNull final Task.TaskListener listener);
   
-  protected abstract void notifyTaskFailed (final Task.TaskListener listener, final Throwable t);
+  protected abstract void notifyTaskFailed (@NonNull final Task.TaskListener listener, @NonNull final Throwable t);
   
   protected final void resetStopRequested () {
     synchronized (this.stopRequested) {

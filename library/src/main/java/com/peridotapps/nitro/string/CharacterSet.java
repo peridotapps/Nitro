@@ -1,5 +1,6 @@
 package com.peridotapps.nitro.string;
 
+import android.support.annotation.NonNull;
 public enum CharacterSet {
   ALPHA,
   ALPHA_LOWER,
@@ -23,6 +24,7 @@ public enum CharacterSet {
   private static final String CHAR_SET_NUMERIC = "0123456789";
   private static final String CHAR_SET_SYMBOLS = "~`!@#$%^&*()_-+={[}]|:;'<,>.?";
   
+  @NonNull
   public String getCharacters () {
     StringBuilder charSet = new StringBuilder();
     

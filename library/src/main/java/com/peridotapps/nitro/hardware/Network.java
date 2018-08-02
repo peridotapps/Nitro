@@ -4,10 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.telephony.TelephonyManager;
+
 import com.peridotapps.nitro.NitroApplication;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -20,7 +25,10 @@ public final class Network {
                                                                                                                                                              .getSystemService(Context.CONNECTIVITY_SERVICE));
   private static final AtomicReference<NetworkMonitor> networkMonitor = new AtomicReference<>(new NetworkMonitor());
   private static final AtomicReference<NetworkReceiver> networkReceiver = new AtomicReference<>(new NetworkReceiver());
+  private static final AtomicReference<TelephonyManager> telephonyManager = new AtomicReference<>((TelephonyManager) NitroApplication.getSharedInstance()
+                                                                                                                                     .getSystemService(Context.TELEPHONY_SERVICE));
   
+  @NonNull
   public static NetworkMonitor getNetworkMonitor () {
     NetworkMonitor monitor;
     
@@ -35,6 +43,7 @@ public final class Network {
     return monitor;
   }
   
+  @NonNull
   public static BroadcastReceiver getNetworkReceiver () {
     BroadcastReceiver receiver;
     synchronized (networkReceiver) {
@@ -47,10 +56,34 @@ public final class Network {
     return receiver;
   }
   
-  public static NetworkInfo getActiveNetwork () {
+  @NonNull
+  public static NetworkInfo getActiveNetworkInfo () {
     return getConnectivityManager().getActiveNetworkInfo();
   }
   
+  @NonNull
+  public static TelephonyManager getTelephonyManager () {
+    TelephonyManager manager;
+    synchronized (telephonyManager) {
+      manager = telephonyManager.get();
+    }
+    
+    return manager;
+  }
+  
+  @NonNull
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  public static android.net.Network getActiveNetwork () {
+    return getConnectivityManager().getActiveNetwork();
+  }
+  
+  @NonNull
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  public static NetworkCapabilities getNetworkCapabilities () {
+    return getConnectivityManager().getNetworkCapabilities(getActiveNetwork());
+  }
+  
+  @NonNull
   private static ConnectivityManager getConnectivityManager () {
     ConnectivityManager instance;
     
@@ -69,8 +102,18 @@ public final class Network {
   }
   
   public static boolean isConnected () {
-    NetworkInfo activeNetwork = getActiveNetwork();
-    return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      NetworkInfo activeNetwork = getActiveNetworkInfo();
+      return activeNetwork.isConnected();
+    } else {
+      NetworkCapabilities capabilities = getNetworkCapabilities();
+    
+      return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+    }
+  }
+  
+  public static boolean isConnectedOrConnecting () {
+    return getActiveNetworkInfo().isConnectedOrConnecting();
   }
   
   public static boolean isMeteredNetwork () {
@@ -80,12 +123,29 @@ public final class Network {
     return false;
   }
   
+  public static int getConnectionType () {
+    return getActiveNetworkInfo().getType();
+  }
+  
+  public static int getNetworkType () {
+    return getTelephonyManager().getNetworkType();
+  }
+  
   public static boolean isWifi () {
-    return getActiveNetwork().getType() == TYPE_WIFI;
+    return getActiveNetworkInfo().getType() == TYPE_WIFI;
+  }
+  
+  @NonNull
+  public static String getNetworkTypeString () {
+    return getActiveNetworkInfo().getTypeName();
+  }
+  
+  @NonNull
+  public static String getNetworkSubtypeName () {
+    return getActiveNetworkInfo().getSubtypeName();
   }
   
   public final static class NetworkMonitor {
-    
     private final List<NetworkStatusObserver> observers = new LinkedList<>();
     
     private NetworkMonitor () {
@@ -96,7 +156,7 @@ public final class Network {
         if (observers.size() > 0) {
           for (NetworkStatusObserver listener : observers) {
             if (connected) {
-              listener.onNetworkConnected();
+              listener.onNetworkConnected(getNetworkTypeString());
             } else {
               listener.onNetworkDisconnected();
             }
@@ -118,25 +178,22 @@ public final class Network {
     public void clearObservers () {
       observers.clear();
     }
+  }
+  
+  public interface NetworkStatusObserver {
+    void onNetworkConnected (@NonNull String networkType);
     
+    void onNetworkDisconnected ();
   }
   
   private final static class NetworkReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive (Context context, Intent intent) {
+    public void onReceive (@NonNull Context context, @NonNull Intent intent) {
       if (intent.getAction() != null && (intent.getAction()
-                                               .equals(ConnectivityManager.CONNECTIVITY_ACTION)))
-
-      {
+                                               .equals(ConnectivityManager.CONNECTIVITY_ACTION))) {
         getNetworkMonitor().notifyStatusChange(isConnected());
       }
-      
     }
   }
   
-  public interface NetworkStatusObserver {
-    void onNetworkConnected ();
-    
-    void onNetworkDisconnected ();
-  }
 }

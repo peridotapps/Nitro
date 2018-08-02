@@ -3,9 +3,10 @@ package com.peridotapps.nitro.ui.view;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import com.peridotapps.nitro.ui.core.INitroCustomControl;
 
 public abstract class NitroProgressView extends LinearLayout implements INitroCustomControl {
@@ -19,12 +20,6 @@ public abstract class NitroProgressView extends LinearLayout implements INitroCu
     inflateLayout(context);
     gatherControls();
     bindData();
-  }
-  
-  @Override
-  public final void inflateLayout (Context context) {
-    LayoutInflater inflater = LayoutInflater.from(context);
-    inflater.inflate(getLayoutResourceId(), this, true);
   }
   
   public final void showProgressView () {
@@ -41,5 +36,10 @@ public abstract class NitroProgressView extends LinearLayout implements INitroCu
     } else {
       runOnUiThread(() -> toggleVisibility(visibility));
     }
+  }
+  
+  @Override
+  public final ViewGroup getViewGroup () {
+    return this;
   }
 }

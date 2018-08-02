@@ -1,16 +1,19 @@
 package com.peridotapps.nitro.async;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.peridotapps.nitro.concurrent.task.RunnableTask;
 import com.peridotapps.nitro.concurrent.task.Task;
 import com.peridotapps.nitro.concurrent.task.TaskMode;
+
 import java.util.Collection;
 import java.util.Map;
 
 public abstract class AsyncOperation<I, O> extends RunnableTask {
   
   private I input = null;
-  private O result;
+  private O result = null;
   private AsyncOperation<O, ?> nextTask;
   
   public AsyncOperation () {
@@ -31,7 +34,8 @@ public abstract class AsyncOperation<I, O> extends RunnableTask {
     this.input = input;
   }
   
-  public abstract O onRun (I input) throws Exception;
+  @Nullable
+  public abstract O onRun (@Nullable I input) throws Exception;
   
   @Override
   public final void onRun () throws Exception {
@@ -52,7 +56,7 @@ public abstract class AsyncOperation<I, O> extends RunnableTask {
     }
   }
   
-  public final AsyncOperation<I, O> setInput (@NonNull I input) {
+  public final AsyncOperation<I, O> setInput (@Nullable I input) {
     this.input = input;
     return this;
   }
@@ -74,34 +78,40 @@ public abstract class AsyncOperation<I, O> extends RunnableTask {
     return this;
   }
   
+  @NonNull
   @Override
   public final AsyncOperation<I, O> addProperty (@NonNull String key, Object value) {
     super.addProperty(key, value);
     return this;
   }
   
+  @NonNull
   @Override
   public final AsyncOperation<I, O> addProperties (@NonNull Map<String, Object> properties) {
     super.addProperties(properties);
     return this;
   }
   
+  @NonNull
   @Override
   public final AsyncOperation<I, O> addListener (@NonNull Task.TaskListener listener) {
     super.addListener(listener);
     return this;
   }
   
+  @NonNull
   @Override
   public final AsyncOperation<I, O> addListeners (@NonNull Collection<TaskListener> listenerCollection) {
     super.addListeners(listenerCollection);
     return this;
   }
   
+  @Nullable
   public I getInput () {
     return input;
   }
   
+  @Nullable
   public O getResult () {
     return result;
   }

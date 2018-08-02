@@ -2,8 +2,10 @@ package com.peridotapps.nitro.intent;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+
 import com.peridotapps.nitro.R;
 public class OpenWebUrlIntent {
   
@@ -27,12 +29,12 @@ public class OpenWebUrlIntent {
       chooserCaption = getString(R.string.link_launch_caption);
     }
   
-    public Builder setUrl(String url) {
+    public Builder setUrl (@NonNull String url) {
       this.url = formatUrl(url);
       return this;
     }
-    
-    public Builder setChooserCaption(String chooserCaption) {
+  
+    public Builder setChooserCaption (@NonNull String chooserCaption) {
       this.chooserCaption = chooserCaption;
       return this;
     }
@@ -71,16 +73,16 @@ public class OpenWebUrlIntent {
       return webLinkIntent;
     }
   
-    private boolean hasWebPrefix(String url) {
+    private boolean hasWebPrefix (@NonNull String url) {
       return url.startsWith(PREFIX_HTTP)
              || url.startsWith(PREFIX_HTTPS);
     }
   
-    private String formatUrl(String url) {
+    private String formatUrl (@NonNull String url) {
       return (hasWebPrefix(url.trim())) ? url.trim() : appendWebPrefix(url);
     }
   
-    private String appendWebPrefix(String url) {
+    private String appendWebPrefix (@NonNull String url) {
       return String.format("http://%s", url).trim();
     }
   

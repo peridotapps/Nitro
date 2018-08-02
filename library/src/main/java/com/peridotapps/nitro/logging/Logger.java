@@ -1,8 +1,11 @@
 package com.peridotapps.nitro.logging;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 import android.util.Log;
+
 import com.peridotapps.nitro.concurrent.task.RunnableTask;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
 
@@ -18,122 +21,122 @@ public final class Logger {
   
   public static final String DEFAULT_LOG_TAG = "<unknown>";
   
-  public static String generateLogTag (Class<?> type) {
+  public static String generateLogTag (@NonNull Class<?> type) {
     return type.getSimpleName();
   }
   
-  public static String generateLogTag (Object obj) {
+  public static String generateLogTag (@NonNull Object obj) {
     return generateLogTag(obj.getClass());
   }
   
-  public static String generateLogTag (Throwable t) {
+  public static String generateLogTag (@NonNull Throwable t) {
     if (t.getStackTrace().length > 1) {
       return t.getStackTrace()[1].getClassName();
     }
     return DEFAULT_LOG_TAG;
   }
   
-  public static void E (Throwable t) {
+  public static void E (@NonNull Throwable t) {
     E(generateLogTag(t), t);
   }
   
-  public static void E (String tag, Throwable t) {
+  public static void E (@NonNull String tag, @NonNull Throwable t) {
     logMessage(tag, Log.getStackTraceString(t), LogType.EXCEPTION);
   }
   
-  public static void E (Class<?> type, Throwable t) {
+  public static void E (@NonNull Class<?> type, @NonNull Throwable t) {
     E(generateLogTag(type), t);
   }
   
-  public static void E (Object obj, Throwable t) {
+  public static void E (@NonNull Object obj, @NonNull Throwable t) {
     E(generateLogTag(obj), t);
   }
   
-  public static void D (String message) {
+  public static void D (@NonNull String message) {
     D(generateLogTag(new Throwable()), message);
   }
   
-  public static void D (String tag, String message) {
+  public static void D (@NonNull String tag, @NonNull String message) {
     logMessage(tag, message, LogType.DEBUG);
   }
   
-  public static void D (Class<?> type, String message) {
+  public static void D (@NonNull Class<?> type, @NonNull String message) {
     D(generateLogTag(type), message);
   }
   
-  public static void D (Object obj, String message) {
+  public static void D (@NonNull Object obj, @NonNull String message) {
     D(generateLogTag(obj), message);
   }
   
-  public static void I (String message) {
+  public static void I (@NonNull String message) {
     I(generateLogTag(new Throwable()), message);
   }
   
-  public static void I (String tag, String message) {
+  public static void I (@NonNull String tag, @NonNull String message) {
     logMessage(tag, message, LogType.INFORMATION);
   }
   
-  public static void I (Class<?> type, String message) {
+  public static void I (@NonNull Class<?> type, @NonNull String message) {
     I(generateLogTag(type), message);
   }
   
-  public static void I (Object obj, String message) {
+  public static void I (@NonNull Object obj, @NonNull String message) {
     I(generateLogTag(obj), message);
   }
   
-  public static void W (String message) {
+  public static void W (@NonNull String message) {
     W(generateLogTag(new Throwable()), message);
   }
   
-  public static void W (String tag, String message) {
+  public static void W (@NonNull String tag, @NonNull String message) {
     logMessage(tag, message, LogType.WARNING);
   }
   
-  public static void W (Class<?> type, String message) {
+  public static void W (@NonNull Class<?> type, @NonNull String message) {
     W(generateLogTag(type), message);
   }
   
-  public static void W (Object obj, String message) {
+  public static void W (@NonNull Object obj, @NonNull String message) {
     W(generateLogTag(obj), message);
   }
   
-  public static void V (String message) {
+  public static void V (@NonNull String message) {
     V(generateLogTag(new Throwable()), message);
   }
   
-  public static void V (String tag, String message) {
+  public static void V (@NonNull String tag, @NonNull String message) {
     logMessage(tag, message, LogType.VERBOSE);
   }
   
-  public static void V (Class<?> type, String message) {
+  public static void V (@NonNull Class<?> type, @NonNull String message) {
     V(generateLogTag(type), message);
   }
   
-  public static void V (Object obj, String message) {
+  public static void V (@NonNull Object obj, @NonNull String message) {
     V(generateLogTag(obj), message);
   }
   
-  public static void WTF (String message) {
+  public static void WTF (@NonNull String message) {
     WTF(generateLogTag(new Throwable()), message);
   }
   
-  public static void WTF (String tag, String message) {
+  public static void WTF (@NonNull String tag, @NonNull String message) {
     logMessage(tag, message, LogType.WHAT_THE_F);
   }
   
-  public static void WTF (Class<?> type, String message) {
+  public static void WTF (@NonNull Class<?> type, @NonNull String message) {
     WTF(generateLogTag(type), message);
   }
   
-  public static void WTF (Object obj, String message) {
+  public static void WTF (@NonNull Object obj, @NonNull String message) {
     WTF(generateLogTag(obj), message);
   }
   
-  private static void logMessage (String tag, String message, @LogType String logType) {
+  private static void logMessage (@NonNull String tag, @NonNull String message, @NonNull @LogType String logType) {
     getLogMessageRunnable(tag, message, logType).execute();
   }
   
-  private static RunnableTask getLogMessageRunnable (String tag, String message, @LogType String logType) {
+  private static RunnableTask getLogMessageRunnable (@NonNull String tag, @NonNull String message, @NonNull @LogType String logType) {
     return new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -142,7 +145,7 @@ public final class Logger {
     };
   }
   
-  private static void writeToLog (@LogType String logType, String tag, String message) {
+  private static void writeToLog (@LogType @NonNull String logType, @NonNull String tag, @NonNull String message) {
     switch (logType.toLowerCase()) {
       case LogType.DEBUG:
         Log.d(tag, message);

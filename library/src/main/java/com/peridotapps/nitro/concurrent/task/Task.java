@@ -1,5 +1,6 @@
 package com.peridotapps.nitro.concurrent.task;
 
+import android.support.annotation.NonNull;
 public interface Task {
   
   int STEP_ON_START = 0;
@@ -14,15 +15,15 @@ public interface Task {
   
   void onCompleted ();
   
-  void onFailed (Throwable t);
+  void onFailed (@NonNull Throwable t);
   
   interface TaskListener {
     
     void started ();
     
     void completed ();
-    
-    void failed (Throwable t);
+  
+    void failed (@NonNull Throwable t);
     
   }
 }

@@ -1,6 +1,8 @@
 package com.peridotapps.nitro.ui.core;
 
 import android.os.Looper;
+import android.support.annotation.NonNull;
+
 import com.peridotapps.nitro.concurrent.ConcurrentHandler;
 
 public interface INitroUiConcurrent {
@@ -9,28 +11,28 @@ public interface INitroUiConcurrent {
     return isMainThread(Thread.currentThread());
   }
   
-  default boolean isMainThread (Thread thread) {
+  default boolean isMainThread (@NonNull Thread thread) {
     return thread.getId() == Looper.getMainLooper()
                                    .getThread()
                                    .getId();
   }
   
-  default void runOnNewThread (Runnable action) {
+  default void runOnNewThread (@NonNull Runnable action) {
     ConcurrentHandler.getSharedInstance()
                      .runOnNewThread(action);
   }
   
-  default void runOnNewThread (Runnable action, long delay) {
+  default void runOnNewThread (@NonNull Runnable action, long delay) {
     ConcurrentHandler.getSharedInstance()
                      .runOnNewThread(action, delay);
   }
   
-  default void runOnUiThread (Runnable action) {
+  default void runOnUiThread (@NonNull Runnable action) {
     ConcurrentHandler.getSharedInstance()
                      .runOnUiThread(action);
   }
   
-  default void runOnUiThread (Runnable action, long delay) {
+  default void runOnUiThread (@NonNull Runnable action, long delay) {
     ConcurrentHandler.getSharedInstance()
                      .runOnUiThread(action, delay);
   }

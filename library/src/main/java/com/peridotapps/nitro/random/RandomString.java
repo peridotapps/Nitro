@@ -1,8 +1,11 @@
 package com.peridotapps.nitro.random;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.peridotapps.nitro.string.CharacterSet;
+
 import java.util.Random;
 
 import static com.peridotapps.nitro.string.CharacterSet.ALPHA_NUMERIC;
@@ -68,6 +71,7 @@ public final class RandomString extends Randomizer<String> {
     return randomStringBuilder.toString();
   }
   
+  @NonNull
   public final RandomString setCharacterSet (CharacterSet characterSetType) {
     if (characterSetType != CUSTOM) {
       this.customCharacterSet = "";
@@ -77,7 +81,8 @@ public final class RandomString extends Randomizer<String> {
     return this;
   }
   
-  public final RandomString setCharacterSet (String customCharacterSet) {
+  @NonNull
+  public final RandomString setCharacterSet (@NonNull String customCharacterSet) {
     if (!TextUtils.isEmpty(customCharacterSet)) {
       this.customCharacterSet = customCharacterSet;
       this.characterSet = CUSTOM;
@@ -85,11 +90,13 @@ public final class RandomString extends Randomizer<String> {
     return this;
   }
   
+  @NonNull
   public final RandomString setMinLength (int minimumLength) {
     this.minimumLength = (minimumLength > 0) ? minimumLength : 1;
     return this;
   }
   
+  @NonNull
   public final RandomString setMaxLength (int maximumLength) {
     this.maximumLength = (maximumLength > 0) ? maximumLength : 1;
     return this;
@@ -103,10 +110,12 @@ public final class RandomString extends Randomizer<String> {
     return maximumLength;
   }
   
+  @NonNull
   public CharacterSet getCharacterSet () {
     return characterSet;
   }
   
+  @NonNull
   public String getCharacterSetCharacters () {
     return (TextUtils.isEmpty(customCharacterSet)) ? (getCharacterSet() != CUSTOM) ? getCharacterSet().getCharacters() : ALPHA_NUMERIC.getCharacters() : customCharacterSet;
   }

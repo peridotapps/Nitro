@@ -1,5 +1,7 @@
 package com.peridotapps.nitro.concurrent;
 
+import android.support.annotation.NonNull;
+
 import com.peridotapps.nitro.concurrent.task.RunnableTask;
 import com.peridotapps.nitro.concurrent.task.TaskMode;
 
@@ -20,24 +22,24 @@ public final class ConcurrentHandler {
   private ConcurrentHandler () {
   }
   
-  public final void runOnNewThread (Runnable action) {
+  public final void runOnNewThread (@NonNull Runnable action) {
     RunnableTask.createActionRunnable(action)
                 .execute();
   }
   
-  public final void runOnNewThread (Runnable action, long delay) {
+  public final void runOnNewThread (@NonNull Runnable action, long delay) {
     RunnableTask.createActionRunnable(action)
                 .setTaskDelay(delay)
                 .execute();
   }
   
-  public final void runOnUiThread (Runnable action) {
+  public final void runOnUiThread (@NonNull Runnable action) {
     RunnableTask.createActionRunnable(action)
                 .setTaskThreadMode(TaskMode.MAIN)
                 .execute();
   }
   
-  public final void runOnUiThread (Runnable action, long delay) {
+  public final void runOnUiThread (@NonNull Runnable action, long delay) {
     RunnableTask.createActionRunnable(action)
                 .setTaskThreadMode(TaskMode.MAIN)
                 .setTaskDelay(delay)

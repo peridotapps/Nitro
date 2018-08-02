@@ -2,7 +2,9 @@ package com.peridotapps.nitro.random;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.peridotapps.nitro.concurrent.task.RunnableTask;
+
 import java.util.Random;
 
 public abstract class Randomizer<T> {
@@ -22,6 +24,7 @@ public abstract class Randomizer<T> {
     }
   }
   
+  @NonNull
   private RunnableTask generateAsync (@NonNull final RandomCallback<T> callback) {
     return new RunnableTask() {
       
@@ -39,7 +42,7 @@ public abstract class Randomizer<T> {
       }
       
       @Override
-      public void onFailed (Throwable t) {
+      public void onFailed (@NonNull Throwable t) {
         super.onFailed(t);
         callback.onGenerated(null);
       }

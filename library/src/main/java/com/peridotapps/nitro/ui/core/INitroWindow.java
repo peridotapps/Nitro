@@ -1,6 +1,8 @@
 package com.peridotapps.nitro.ui.core;
 
 import android.support.annotation.MenuRes;
+import android.support.annotation.Nullable;
+
 import com.peridotapps.nitro.ui.view.NitroProgressView;
 
 public interface INitroWindow extends INitroView {
@@ -10,6 +12,7 @@ public interface INitroWindow extends INitroView {
   @MenuRes
   Integer getMenuResourceId ();
   
+  @Nullable
   default NitroProgressView getProgressView () {
     return null;
   }

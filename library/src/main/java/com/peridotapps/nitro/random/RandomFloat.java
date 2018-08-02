@@ -1,5 +1,7 @@
 package com.peridotapps.nitro.random;
 
+import android.support.annotation.Nullable;
+
 import java.util.Random;
 
 public final class RandomFloat extends RandomNumber<Float> {
@@ -17,6 +19,7 @@ public final class RandomFloat extends RandomNumber<Float> {
   }
 
   @Override
+  @Nullable
   protected Float onGenerate (Random r) {
     float randomVal = r.nextFloat();
 

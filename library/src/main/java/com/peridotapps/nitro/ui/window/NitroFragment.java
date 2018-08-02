@@ -4,21 +4,26 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.peridotapps.nitro.hardware.Network;
 import com.peridotapps.nitro.ui.core.INitroWindow;
 import com.peridotapps.nitro.ui.view.NitroProgressView;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 abstract class NitroFragment extends Fragment implements INitroWindow, Network.NetworkStatusObserver {
   
   private LayoutInflater inflater;
   private ViewGroup container;
   private View view;
+  private static final AtomicBoolean hasNetworkConnection = new AtomicBoolean(true);
   
   @Override
   public void attachLayout () {
@@ -27,7 +32,7 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
   
   @Nullable
   @Override
-  public final View onCreateView (LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+  public final View onCreateView (LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     setCreateProperties(inflater, container);
     setHasOptionsMenu(hasMenu());
     attachLayout();
@@ -63,6 +68,24 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
     // Stub
   }
   
+  private void setHasNetworkConnection (boolean isConnected) {
+    synchronized (hasNetworkConnection) {
+      hasNetworkConnection.set(isConnected);
+    }
+  }
+  
+  @CallSuper
+  @Override
+  public void onNetworkConnected (@Nullable String networkType) {
+    setHasNetworkConnection(true);
+  }
+  
+  @CallSuper
+  @Override
+  public void onNetworkDisconnected () {
+    setHasNetworkConnection(false);
+  }
+  
   @Override
   public final NitroProgressView getProgressView () {
     if (getActivity() != null && getActivity() instanceof NitroActivity) {
@@ -85,7 +108,7 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
   }
   
   @Override
-  public final void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+  public final void onCreateOptionsMenu (@NonNull Menu menu, @NonNull MenuInflater inflater) {
     if (hasMenu()) {
       inflater.inflate(getMenuResourceId(), menu);
     }
@@ -96,7 +119,7 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
     return false;
   }
   
-  protected void handleCreateViewSavedInstanceState (Bundle savedInstanceState) {
+  protected void handleCreateViewSavedInstanceState (@Nullable Bundle savedInstanceState) {
     // Stub
   }
   
@@ -108,7 +131,7 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
     return container;
   }
   
-  private void setCreateProperties (LayoutInflater inflater, @Nullable ViewGroup container) {
+  private void setCreateProperties (@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
     this.inflater = inflater;
     this.container = container;
   }

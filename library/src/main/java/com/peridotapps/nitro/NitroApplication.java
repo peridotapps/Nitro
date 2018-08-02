@@ -10,12 +10,16 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+
 import com.peridotapps.nitro.hardware.Network;
 import com.peridotapps.nitro.logging.Logger;
 import com.peridotapps.nitro.ui.core.INitroUiConcurrent;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +36,7 @@ public abstract class NitroApplication extends Application implements INitroUiCo
   
   private static final AtomicReference<NitroApplication> instance = new AtomicReference<>();
   private static final AtomicInteger applicationState = new AtomicInteger(ApplicationState.UNKNOWN);
+  private static final AtomicBoolean hasNetworkConnection = new AtomicBoolean(true);
   
   public static NitroApplication getSharedInstance () {
     synchronized (instance) {
@@ -39,7 +44,7 @@ public abstract class NitroApplication extends Application implements INitroUiCo
     }
   }
   
-  private static void setSharedInstance (NitroApplication app) {
+  private static void setSharedInstance (@NonNull NitroApplication app) {
     synchronized (instance) {
       instance.set(app);
     }
@@ -146,6 +151,16 @@ public abstract class NitroApplication extends Application implements INitroUiCo
   final void enterBackground () {
     setApplicationState(ApplicationState.BACKGROUND);
     onEnterBackground();
+  }
+  
+  @CallSuper
+  public void onNetworkConnected (@NonNull String networkType) {
+    // stub
+  }
+  
+  @CallSuper
+  public void onNetworkDisconnected () {
+    // stub
   }
   
   @Documented

@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+
 import com.peridotapps.nitro.NitroApplication;
 import com.peridotapps.nitro.atomic.AtomicString;
 import com.peridotapps.nitro.logging.Logger;
+
 import java.io.InvalidClassException;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +35,7 @@ public class PreferenceLibrary {
     }
   }
   
+  @NonNull
   private Map<String, Object> getPreferenceCache () {
     Map<String, Object> prefCache;
     synchronized (preferenceCache) {
@@ -59,12 +62,14 @@ public class PreferenceLibrary {
     }
   }
   
+  @NonNull
   private String getLibraryIdentifier () {
     synchronized (preferenceLibraryIdentifier) {
       return preferenceLibraryIdentifier.get();
     }
   }
   
+  @NonNull
   private SharedPreferences getSharedPreferences () {
     synchronized (sharedPreferences) {
       if (sharedPreferences.get() == null) {
@@ -77,7 +82,8 @@ public class PreferenceLibrary {
   }
   
   @SuppressWarnings("unchecked")
-  private <T> T readPreference (String identifier, T defaultValue) {
+  @NonNull
+  private <T> T readPreference (@NonNull String identifier, @NonNull T defaultValue) {
     
     SharedPreferences preferences = getSharedPreferences();
     Map<String, Object> preferencesCache = getPreferenceCache();
@@ -95,7 +101,7 @@ public class PreferenceLibrary {
   
   @SuppressWarnings("unchecked")
   @SuppressLint("ApplySharedPref")
-  private <T> void writePreference (String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
+  private <T> void writePreference (@NonNull String identifier, @NonNull T value, boolean commit) throws InvalidClassException {
     SharedPreferences.Editor preferencesEditor = getSharedPreferences().edit();
     
     if (value instanceof String) {
@@ -123,7 +129,7 @@ public class PreferenceLibrary {
     getPreferenceCache().put(identifier, value);
   }
   
-  public boolean removePreference (String identifier) {
+  public boolean removePreference (@NonNull String identifier) {
     try {
       SharedPreferences preferences = getSharedPreferences();
       getPreferenceCache().remove(identifier);
@@ -149,31 +155,38 @@ public class PreferenceLibrary {
     }
   }
   
-  public String getPreference (String identifier, String defaultValue) {
+  @NonNull
+  public String getPreference (@NonNull String identifier, @NonNull String defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public Long getPreference (String identifier, Long defaultValue) {
+  @NonNull
+  public Long getPreference (@NonNull String identifier, @NonNull Long defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public Integer getPreference (String identifier, Integer defaultValue) {
+  @NonNull
+  public Integer getPreference (@NonNull String identifier, @NonNull Integer defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public Float getPreference (String identifier, Float defaultValue) {
+  @NonNull
+  public Float getPreference (@NonNull String identifier, @NonNull Float defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public Boolean getPreference (String identifier, Boolean defaultValue) {
+  @NonNull
+  public Boolean getPreference (@NonNull String identifier, @NonNull Boolean defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public Set<String> getPreference (String identifier, Set<String> defaultValue) {
+  @NonNull
+  public Set<String> getPreference (@NonNull String identifier, @NonNull Set<String> defaultValue) {
     return readPreference(identifier, defaultValue);
   }
   
-  public PreferenceLibrary applyPreference (String identifier, @NonNull String value) {
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull String value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -182,7 +195,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary applyPreference (String identifier, @NonNull Integer value) {
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull Integer value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -191,7 +205,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary applyPreference (String identifier, @NonNull Long value) {
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull Long value) {
     try {
       writePreference(identifier, value, false);
     } catch (InvalidClassException e) {
@@ -200,26 +215,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary applyPreference (String identifier, @NonNull Float value) {
-    try {
-      writePreference(identifier, value, false);
-      
-    } catch (InvalidClassException e) {
-      Logger.E(this, e);
-    }
-    return this;
-  }
-  
-  public PreferenceLibrary applyPreference (String identifier, @NonNull Boolean value) {
-    try {
-      writePreference(identifier, value, false);
-    } catch (InvalidClassException e) {
-      Logger.E(this, e);
-    }
-    return this;
-  }
-  
-  public PreferenceLibrary applyPreference (String identifier, @NonNull Set<String> value) {
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull Float value) {
     try {
       writePreference(identifier, value, false);
       
@@ -229,7 +226,29 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull String value) {
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull Boolean value) {
+    try {
+      writePreference(identifier, value, false);
+    } catch (InvalidClassException e) {
+      Logger.E(this, e);
+    }
+    return this;
+  }
+  
+  @NonNull
+  public PreferenceLibrary applyPreference (@NonNull String identifier, @NonNull Set<String> value) {
+    try {
+      writePreference(identifier, value, false);
+      
+    } catch (InvalidClassException e) {
+      Logger.E(this, e);
+    }
+    return this;
+  }
+  
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull String value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -239,7 +258,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull Integer value) {
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull Integer value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -249,7 +269,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull Long value) {
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull Long value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -259,7 +280,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull Float value) {
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull Float value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -269,7 +291,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull Boolean value) {
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull Boolean value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -279,7 +302,8 @@ public class PreferenceLibrary {
     return this;
   }
   
-  public PreferenceLibrary commitPreference (String identifier, @NonNull Set<String> value) {
+  @NonNull
+  public PreferenceLibrary commitPreference (@NonNull String identifier, @NonNull Set<String> value) {
     try {
       writePreference(identifier, value, true);
     } catch (InvalidClassException e) {
@@ -296,17 +320,20 @@ public class PreferenceLibrary {
     public Builder () {
     
     }
-    
+  
+    @NonNull
     public Builder setAccessMode (int accessMode) {
       this.library.setAccessMode(accessMode);
       return this;
     }
-    
-    public Builder setIdentifier (String identifier) {
+  
+    @NonNull
+    public Builder setIdentifier (@NonNull String identifier) {
       this.library.setLibraryIdentifier(identifier);
       return this;
     }
-    
+  
+    @NonNull
     public PreferenceLibrary build () {
       this.library.setPreferenceCache(this.library.getSharedPreferences()
                                                   .getAll());

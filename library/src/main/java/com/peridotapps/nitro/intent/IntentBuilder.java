@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+
 import com.peridotapps.nitro.NitroApplication;
 abstract class IntentBuilder {
   
@@ -14,12 +15,12 @@ abstract class IntentBuilder {
   public abstract Intent build (@Nullable Integer flags);
   
   @NonNull
-  protected static String processNull(String value) {
+  protected static String processNull (@Nullable String value) {
     return processNull(value, "");
   }
   
   @NonNull
-  protected static String processNull(String value, @NonNull String defaultValue) {
+  protected static String processNull (@Nullable String value, @NonNull String defaultValue) {
     return (value != null) ? value : defaultValue;
   }
   

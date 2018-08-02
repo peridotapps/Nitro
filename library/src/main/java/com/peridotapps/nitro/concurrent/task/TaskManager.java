@@ -7,9 +7,17 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.peridotapps.nitro.hardware.Cpu;
 import com.peridotapps.nitro.random.RandomString;
-import java.util.concurrent.*;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.peridotapps.nitro.string.CharacterSet.ALPHA_NUMERIC;
@@ -47,7 +55,7 @@ final class TaskManager {
         .generate();
   }
   
-  static void execute (RunnableTask runnableTask) {
+  static void execute (@NonNull RunnableTask runnableTask) {
     if (runnableTask.getTaskMode() == TaskMode.MAIN) {
       executeOnMain(runnableTask, runnableTask.getDelayInMilliseconds());
     } else {
@@ -55,17 +63,19 @@ final class TaskManager {
     }
   }
   
-  static <T> T execute (CallableTask<T> callableTask) throws ExecutionException, InterruptedException {
+  @Nullable
+  static <T> T execute (@NonNull CallableTask<T> callableTask) throws ExecutionException, InterruptedException {
     return getFuture(callableTask).get();
   }
   
-  static <T> Future<T> getFuture (CallableTask<T> callableTask) {
+  @NonNull
+  static <T> Future<T> getFuture (@NonNull CallableTask<T> callableTask) {
     return getSharedInstance()
         .getExecutorServiceInstance()
         .submit(callableTask);
   }
   
-  private static void executeOnNew (Runnable runnable, long delayInMilliseconds) {
+  private static void executeOnNew (@NonNull Runnable runnable, long delayInMilliseconds) {
     if (delayInMilliseconds > 0) {
       getSharedInstance()
           .getScheduledExecutorServiceInstance()
@@ -77,7 +87,7 @@ final class TaskManager {
     }
   }
   
-  private static void executeOnMain (Runnable runnable, long delayInMilliseconds) {
+  private static void executeOnMain (@NonNull Runnable runnable, long delayInMilliseconds) {
     if (delayInMilliseconds > 0) {
       getSharedInstance()
           .getHandlerInstance()

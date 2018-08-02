@@ -2,6 +2,7 @@ package com.peridotapps.nitro.concurrent.task;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   
   @CallSuper
   @Override
+  @Nullable
   public Void doWork () throws Exception {
     onRun();
     return null;
@@ -33,7 +35,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
     super();
   }
   
-  public RunnableTask (String taskId) {
+  public RunnableTask (@NonNull String taskId) {
     super(taskId);
   }
   
@@ -57,30 +59,34 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
     return this;
   }
   
+  @NonNull
   @CallSuper
   @Override
-  public RunnableTask addProperty (String key, Object value) {
+  public RunnableTask addProperty (@NonNull String key, @NonNull Object value) {
     super.addProperty(key, value);
     return this;
   }
   
+  @NonNull
   @CallSuper
   @Override
-  public RunnableTask addProperties (Map<String, Object> properties) {
+  public RunnableTask addProperties (@NonNull Map<String, Object> properties) {
     super.addProperties(properties);
     return this;
   }
   
+  @NonNull
   @CallSuper
   @Override
-  public RunnableTask addListener (Task.TaskListener listener) {
+  public RunnableTask addListener (@NonNull Task.TaskListener listener) {
     super.addListener(listener);
     return this;
   }
   
+  @NonNull
   @CallSuper
   @Override
-  public RunnableTask addListeners (Collection<Task.TaskListener> listenerCollection) {
+  public RunnableTask addListeners (@NonNull Collection<Task.TaskListener> listenerCollection) {
     super.addListeners(listenerCollection);
     return this;
   }
@@ -100,6 +106,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
     return false;
   }
   
+  @NonNull
   public final TaskMode getTaskMode () {
     return taskMode;
   }
@@ -113,7 +120,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyStarted (List<TaskListener> listeners) {
+  protected void notifyStarted (@NonNull List<TaskListener> listeners) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -125,7 +132,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyCompleted (List<TaskListener> listeners) {
+  protected void notifyCompleted (@NonNull List<TaskListener> listeners) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -137,7 +144,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyFailure (List<TaskListener> listeners, Throwable t) {
+  protected void notifyFailure (@NonNull List<TaskListener> listeners, @NonNull Throwable t) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -149,7 +156,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyTaskStarted (TaskListener listener) {
+  protected void notifyTaskStarted (@NonNull TaskListener listener) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -159,7 +166,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyTaskCompleted (TaskListener listener) {
+  protected void notifyTaskCompleted (@NonNull TaskListener listener) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {
@@ -169,7 +176,7 @@ public abstract class RunnableTask extends CoreTask implements Runnable, Compara
   }
   
   @Override
-  protected void notifyTaskFailed (TaskListener listener, Throwable t) {
+  protected void notifyTaskFailed (@NonNull TaskListener listener, @NonNull Throwable t) {
     new RunnableTask() {
       @Override
       public void onRun () throws Exception {

@@ -2,12 +2,15 @@ package com.peridotapps.nitro.ui.window;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
+
 import com.peridotapps.nitro.ui.core.INitroDataboundWindow;
 
 public abstract class DataboundFragment<B extends ViewDataBinding> extends NitroFragment implements INitroDataboundWindow<B> {
 
   private B binding;
-
+  
+  @NonNull
   @Override
   public final B getBinding () {
     return binding;
@@ -19,7 +22,7 @@ public abstract class DataboundFragment<B extends ViewDataBinding> extends Nitro
   }
 
   @Override
-  public void bindData (B binding) {
+  public void bindData (@NonNull B binding) {
     // stub
   }
 
