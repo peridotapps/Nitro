@@ -6,7 +6,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -15,7 +15,7 @@ import com.peridotapps.nitro.ui.core.INitroWindow;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-abstract class NitroActivity extends FragmentActivity implements INitroWindow, Network.NetworkStatusObserver {
+abstract class NitroActivity extends AppCompatActivity implements INitroWindow, Network.NetworkStatusObserver {
 
     @LayoutRes
     private int layoutResourceId;
@@ -73,10 +73,8 @@ abstract class NitroActivity extends FragmentActivity implements INitroWindow, N
     @Override
     protected void onResume() {
         super.onResume();
-
         Network.getNetworkMonitor()
                 .addObserver(this);
-
         bindData();
     }
 

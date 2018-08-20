@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion project.compileAPI.toInteger()
+    buildToolsVersion project.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion project.minAPI.toInteger()
+        targetSdkVersion project.targetAPI.toInteger()
+        versionName project.versionName
+        versionCode project.versionCode.toInteger()
+    }
+
+    buildTypes {
+        debug {
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":library")
+
+    //noinspection GradleCompatible
+    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+}

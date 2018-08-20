@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'maven'
 
 android {
@@ -10,13 +13,6 @@ android {
         targetSdkVersion project.targetAPI.toInteger()
         versionName project.versionName
         versionCode project.versionCode.toInteger()
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
-    }
-
-    dexOptions {
-        dexInProcess = true
-        javaMaxHeapSize "5g"
     }
 
     dataBinding {
@@ -25,17 +21,10 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled true
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
         }
     }
 
@@ -46,21 +35,23 @@ android {
 }
 
 dependencies {
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.robolectric:robolectric:$robolectricVersion"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
-    implementation "com.android.support:support-annotations:$supportLibraryVersion"
-    implementation "com.android.support:support-v13:$supportLibraryVersion"
     implementation "com.android.support:design:$supportLibraryVersion"
     implementation "com.android.support:multidex:$alternateSupportLibraryVersion"
+    implementation "com.android.support:support-annotations:$supportLibraryVersion"
+    implementation "com.android.support:support-v13:$supportLibraryVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
-    implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
+    kapt "com.android.databinding:compiler:$androidToolsVersion"
+    kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
+}
 
-    annotationProcessor "com.android.databinding:compiler:$androidToolsVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$lifecycleVersion"
+repositories {
+    mavenCentral()
 }
 
 //apply from: 'publish.gradle'

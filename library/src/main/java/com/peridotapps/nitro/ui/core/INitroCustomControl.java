@@ -7,16 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public interface INitroCustomControl extends INitroView {
-  
-  default boolean getAttachToRoot () {
-    return true;
-  }
-  
-  ViewGroup getViewGroup ();
-  
-  default View inflateLayout (@NonNull Context context) {
-    return LayoutInflater.from(context)
-                         .inflate(getLayoutResourceId(), getViewGroup(), getAttachToRoot());
-  }
-  
+
+    default boolean getAttachToRoot() {
+        return true;
+    }
+
+    ViewGroup getViewGroup();
+
+    default View inflateLayout(@NonNull Context context) {
+        return LayoutInflater.from(context)
+                .inflate(getLayoutResourceId(), getViewGroup(), getAttachToRoot());
+    }
+
 }

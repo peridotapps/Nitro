@@ -29,146 +29,149 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 
 public abstract class NitroApplication extends Application implements INitroUiConcurrent, Network.NetworkStatusObserver, LifecycleObserver {
-  
-  private static final String APP_STATUS_STRING_UNKNOWN = "unknown";
-  private static final String APP_STATUS_STRING_BACKGROUND = "background";
-  private static final String APP_STATUS_STRING_FOREGROUND = "foreground";
-  
-  private static final AtomicReference<NitroApplication> instance = new AtomicReference<>();
-  private static final AtomicInteger applicationState = new AtomicInteger(ApplicationState.UNKNOWN);
-  private static final AtomicBoolean hasNetworkConnection = new AtomicBoolean(true);
-  
-  public static NitroApplication getSharedInstance () {
-    synchronized (instance) {
-      return instance.get();
+
+    private static final String APP_STATUS_STRING_UNKNOWN = "unknown";
+    private static final String APP_STATUS_STRING_BACKGROUND = "background";
+    private static final String APP_STATUS_STRING_FOREGROUND = "foreground";
+
+    private static final AtomicReference<NitroApplication> instance = new AtomicReference<>();
+    private static final AtomicInteger applicationState = new AtomicInteger(ApplicationState.UNKNOWN);
+    private static final AtomicBoolean hasNetworkConnection = new AtomicBoolean(true);
+
+    public static NitroApplication getSharedInstance() {
+        synchronized (instance) {
+            return instance.get();
+        }
     }
-  }
-  
-  private static void setSharedInstance (@NonNull NitroApplication app) {
-    synchronized (instance) {
-      instance.set(app);
+
+    private static void setSharedInstance(@NonNull NitroApplication app) {
+        synchronized (instance) {
+            instance.set(app);
+        }
     }
-  }
-  
-  @ApplicationState
-  public int getApplicationState () {
-    return applicationState.get();
-  }
-  
-  private void setApplicationState (@ApplicationState int status) {
-    applicationState.set(status);
-  }
-  
-  public String getApplicationStatusString () {
-    switch (getApplicationState()) {
-      case ApplicationState.BACKGROUND:
-        return APP_STATUS_STRING_BACKGROUND;
-      case ApplicationState.FOREGROUND:
-        return APP_STATUS_STRING_FOREGROUND;
+
+    @ApplicationState
+    public int getApplicationState() {
+        return applicationState.get();
     }
-    
-    return APP_STATUS_STRING_UNKNOWN;
-  }
-  
-  @CallSuper
-  @Override
-  public void onCreate () {
-    super.onCreate();
-    
-    NitroApplication.setSharedInstance(this);
-    
-    ProcessLifecycleOwner.get()
-                         .getLifecycle()
-                         .addObserver(this);
-    
-    Network.getNetworkMonitor()
-           .addObserver(this);
-    
-    registerBroadcastReceivers();
-  }
-  
-  @CallSuper
-  public void onEnterForeground () {
-    //stub
-  }
-  
-  @CallSuper
-  public void onEnterBackground () {
-    //stub
-  }
-  
-  @CallSuper
-  public void registerBroadcastReceivers () {
-    registerNetworkReceiver();
-  }
-  
-  @CallSuper
-  public void unregisterBroadcastReceivers () {
-    unregisterNetworkReceiver();
-  }
-  
-  public void onDeviceBootCompleted () {
-    // Stub
-  }
-  
-  protected boolean isMultiDexEnabled () {
-    return true;
-  }
-  
-  private void setupMultiDex () {
-    if (isMultiDexEnabled()) {
-      MultiDex.install(this);
+
+    private void setApplicationState(@ApplicationState int status) {
+        applicationState.set(status);
     }
-  }
-  
-  @CallSuper
-  protected void attachBaseContext (Context base) {
-    super.attachBaseContext(base);
-    setupMultiDex();
-  }
-  
-  private void registerNetworkReceiver () {
-    IntentFilter filter = new IntentFilter();
-    filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-    getApplicationContext().registerReceiver(Network.getNetworkReceiver(), filter);
-  }
-  
-  private void unregisterNetworkReceiver () {
-    try {
-      getApplicationContext().unregisterReceiver(Network.getNetworkReceiver());
-    } catch (Exception e) {
-      Logger.E(this, e);
+
+    public String getApplicationStatusString() {
+        switch (getApplicationState()) {
+            case ApplicationState.BACKGROUND:
+                return APP_STATUS_STRING_BACKGROUND;
+            case ApplicationState.FOREGROUND:
+                return APP_STATUS_STRING_FOREGROUND;
+        }
+
+        return APP_STATUS_STRING_UNKNOWN;
     }
-  }
-  
-  @OnLifecycleEvent(Lifecycle.Event.ON_START)
-  final void enterForeground () {
-    setApplicationState(ApplicationState.FOREGROUND);
-    onEnterForeground();
-  }
-  
-  @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-  final void enterBackground () {
-    setApplicationState(ApplicationState.BACKGROUND);
-    onEnterBackground();
-  }
-  
-  @CallSuper
-  public void onNetworkConnected (@NonNull String networkType) {
-    // stub
-  }
-  
-  @CallSuper
-  public void onNetworkDisconnected () {
-    // stub
-  }
-  
-  @Documented
-  @Target({METHOD, PARAMETER, FIELD, LOCAL_VARIABLE})
-  @IntDef({ApplicationState.UNKNOWN, ApplicationState.BACKGROUND, ApplicationState.FOREGROUND})
-  private @interface ApplicationState {
-    int UNKNOWN = -1;
-    int BACKGROUND = 1;
-    int FOREGROUND = 2;
-  }
+
+    @CallSuper
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        NitroApplication.setSharedInstance(this);
+
+        ProcessLifecycleOwner.get()
+                .getLifecycle()
+                .addObserver(this);
+
+        Network.getNetworkMonitor()
+                .addObserver(this);
+
+        registerBroadcastReceivers();
+    }
+
+    @CallSuper
+    public void onEnterForeground() {
+        //stub
+    }
+
+    @CallSuper
+    public void onEnterBackground() {
+        //stub
+    }
+
+    @CallSuper
+    public void registerBroadcastReceivers() {
+        registerNetworkReceiver();
+    }
+
+    @CallSuper
+    public void unregisterBroadcastReceivers() {
+        unregisterNetworkReceiver();
+    }
+
+    public void onDeviceBootCompleted() {
+        // Stub
+    }
+
+    protected boolean isMultiDexEnabled() {
+        return true;
+    }
+
+    private void setupMultiDex() {
+        if (isMultiDexEnabled()) {
+            MultiDex.install(this);
+        }
+    }
+
+    @Override
+    @CallSuper
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        setupMultiDex();
+    }
+
+    private void registerNetworkReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        getApplicationContext().registerReceiver(Network.getNetworkReceiver(), filter);
+    }
+
+    private void unregisterNetworkReceiver() {
+        try {
+            getApplicationContext().unregisterReceiver(Network.getNetworkReceiver());
+        } catch (Exception e) {
+            Logger.E(this, e);
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    final void enterForeground() {
+        setApplicationState(ApplicationState.FOREGROUND);
+        onEnterForeground();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    final void enterBackground() {
+        setApplicationState(ApplicationState.BACKGROUND);
+        onEnterBackground();
+    }
+
+    @Override
+    @CallSuper
+    public void onNetworkConnected(@NonNull String networkType) {
+        // stub
+    }
+
+    @Override
+    @CallSuper
+    public void onNetworkDisconnected() {
+        // stub
+    }
+
+    @Documented
+    @Target({METHOD, PARAMETER, FIELD, LOCAL_VARIABLE})
+    @IntDef({ApplicationState.UNKNOWN, ApplicationState.BACKGROUND, ApplicationState.FOREGROUND})
+    private @interface ApplicationState {
+        int UNKNOWN = -1;
+        int BACKGROUND = 1;
+        int FOREGROUND = 2;
+    }
 }

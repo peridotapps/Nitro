@@ -10,36 +10,36 @@ import android.widget.LinearLayout;
 import com.peridotapps.nitro.ui.core.INitroCustomControl;
 
 public abstract class NitroProgressView extends LinearLayout implements INitroCustomControl {
-  
-  public NitroProgressView (Context context) {
-    this(context, null);
-  }
-  
-  public NitroProgressView (Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-    inflateLayout(context);
-    gatherControls();
-    bindData();
-  }
-  
-  public final void showProgressView () {
-    toggleVisibility(View.VISIBLE);
-  }
-  
-  public final void hideProgressView () {
-    toggleVisibility(View.GONE);
-  }
-  
-  private void toggleVisibility (int visibility) {
-    if (isMainThread()) {
-      setVisibility(visibility);
-    } else {
-      runOnUiThread(() -> toggleVisibility(visibility));
+
+    public NitroProgressView(Context context) {
+        this(context, null);
     }
-  }
-  
-  @Override
-  public final ViewGroup getViewGroup () {
-    return this;
-  }
+
+    public NitroProgressView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        inflateLayout(context);
+        gatherControls();
+        bindData();
+    }
+
+    public final void showProgressView() {
+        toggleVisibility(View.VISIBLE);
+    }
+
+    public final void hideProgressView() {
+        toggleVisibility(View.GONE);
+    }
+
+    private void toggleVisibility(int visibility) {
+        if (isMainThread()) {
+            setVisibility(visibility);
+        } else {
+            runOnUiThread(() -> toggleVisibility(visibility));
+        }
+    }
+
+    @Override
+    public final ViewGroup getViewGroup() {
+        return this;
+    }
 }

@@ -1,18 +1,18 @@
 package com.peridotapps.nitro.random;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import java.util.Random;
 
 public final class RandomBoolean extends Randomizer<Boolean> {
 
-  public RandomBoolean () {
+    public RandomBoolean() {
 
-  }
+    }
 
-  @Override
-  @Nullable
-  protected Boolean onGenerate (Random r) {
-    return r.nextBoolean();
-  }
+    @Override
+    @NonNull
+    protected Boolean onGenerate(Random r) {
+        return r.nextBoolean();
+    }
 }

@@ -6,27 +6,27 @@ import android.support.annotation.Nullable;
 import com.peridotapps.nitro.ui.view.NitroProgressView;
 
 public interface INitroWindow extends INitroView {
-  
-  void attachLayout ();
-  
-  @MenuRes
-  Integer getMenuResourceId ();
-  
-  @Nullable
-  default NitroProgressView getProgressView () {
-    return null;
-  }
-  
-  default void showProgressView () {
-    if (getProgressView() != null) {
-      getProgressView().showProgressView();
+
+    void attachLayout();
+
+    @MenuRes
+    Integer getMenuResourceId();
+
+    @Nullable
+    default NitroProgressView getProgressView() {
+        return null;
     }
-  }
-  
-  default void hideProgressView () {
-    if (getProgressView() != null) {
-      getProgressView().hideProgressView();
+
+    default void showProgressView() {
+        if (getProgressView() != null) {
+            getProgressView().showProgressView();
+        }
     }
-  }
-  
+
+    default void hideProgressView() {
+        if (getProgressView() != null) {
+            getProgressView().hideProgressView();
+        }
+    }
+
 }

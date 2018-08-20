@@ -32,7 +32,7 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
 
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setCreateProperties(inflater, container);
         setHasOptionsMenu(hasMenu());
         attachLayout();
@@ -73,12 +73,6 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
         // Stub
     }
 
-    private void setHasNetworkConnection(boolean isConnected) {
-        synchronized (hasNetworkConnection) {
-            hasNetworkConnection.set(isConnected);
-        }
-    }
-
     @CallSuper
     @Override
     public void onNetworkConnected(@Nullable String networkType) {
@@ -93,8 +87,8 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
 
     @Override
     public final NitroProgressView getProgressView() {
-        if (getActivity() != null && getActivity() instanceof NitroActivity) {
-            return ((NitroActivity) getActivity()).getProgressView();
+        if (getNitroActivity() != null) {
+            return getNitroActivity().getProgressView();
         }
 
         return null;
@@ -143,5 +137,11 @@ abstract class NitroFragment extends Fragment implements INitroWindow, Network.N
     private void setCreateProperties(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         this.inflater = inflater;
         this.container = container;
+    }
+
+    private void setHasNetworkConnection(boolean isConnected) {
+        synchronized (hasNetworkConnection) {
+            hasNetworkConnection.set(isConnected);
+        }
     }
 }
